@@ -48,8 +48,8 @@ export function createDefaultFaluche(): Faluche {
       couleurPrincipale: '#4169E1',
       matiere: 'satin',
     },
-    villeEtude: { nom: 'Compiègne', couleurs: ['#4169E1', '#CC0000'] },
-    villeNaissance: { nom: 'Beauvais', couleurs: ['#CC0000', '#4169E1'] },
+    villeEtude: { nom: 'Compiègne', couleurs: ['#FFD700', '#4169E1'] },
+    villeNaissance: { nom: 'Beauvais', couleurs: ['#CC0000', '#FFFFFF'] },
     provinceNaissance: { nom: 'Picardie', couleurs: ['#4169E1', '#FFFFFF'] },
     velours: {
       rubans: [],

@@ -28,7 +28,7 @@ export const FILIERES: Filiere[] = [
   { nom: "Écoles d'ingénieurs", couleur: '#4169E1', matiere: 'satin', label: 'Satin bleu & noir' },
   { nom: 'MEEF', couleur: '#808080', matiere: 'satin', label: 'Satin gris' },
   { nom: 'Filières sportives', couleur: '#006400', matiere: 'satin', label: 'Satin vert foncé' },
-  { nom: 'BUT / DUT / BTS / Bachelor', couleur: '#F4A6C0', matiere: 'satin', label: 'Satin rose' },
+  { nom: 'BUT / DUT / BTS / Bachelor', couleur: '#FFFFFF', matiere: 'satin', label: 'Satin blanc' },
   { nom: 'Lettres / Langues / SHS', couleur: '#FFD700', matiere: 'satin', label: 'Satin jaune' },
   { nom: 'Musique / Musicologie', couleur: '#C0C0C0', matiere: 'satin', label: 'Satin argenté' },
   { nom: 'Oenologie', couleur: '#FA8072', matiere: 'satin', label: 'Satin saumon' },
