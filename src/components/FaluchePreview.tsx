@@ -9,13 +9,13 @@ interface FaluchePreviewProps {
 }
 
 const SVG_WIDTH = 500;
-const SVG_HEIGHT = 600;
+const SVG_HEIGHT = 620;
 const CIRCLE_CX = 250;
 const CIRCLE_CY = 240;
 const CIRCLE_RADIUS = 200;
-const CIRCULAIRE_X = 50;
-const CIRCULAIRE_Y = 480;
-const CIRCULAIRE_WIDTH = 400;
+const CIRCULAIRE_X = 20;
+const CIRCULAIRE_Y = 490;
+const CIRCULAIRE_WIDTH = 460;
 const CIRCULAIRE_HEIGHT = 40;
 
 const RUBAN_WIDTH = 18;
@@ -176,30 +176,8 @@ export function FaluchePreview({ faluche }: FaluchePreviewProps) {
         y={CIRCULAIRE_Y}
         width={CIRCULAIRE_WIDTH}
         height={CIRCULAIRE_HEIGHT}
-        couleur={faluche.circulaire.couleurPrincipale}
-        discipline={faluche.circulaire.discipline}
+        circulaire={faluche.circulaire}
       />
-
-      {faluche.circulaire.discipline && (
-        <text
-          x={CIRCLE_CX}
-          y={CIRCULAIRE_Y + CIRCULAIRE_HEIGHT / 2 + 5}
-          textAnchor="middle"
-          fill={isLightColor(faluche.circulaire.couleurPrincipale) ? '#333' : '#fff'}
-          fontSize={13}
-          fontWeight="bold"
-        >
-          {faluche.circulaire.discipline}
-        </text>
-      )}
     </svg>
   );
-}
-
-function isLightColor(hex: string): boolean {
-  const c = hex.replace('#', '');
-  const r = parseInt(c.substring(0, 2), 16);
-  const g = parseInt(c.substring(2, 4), 16);
-  const b = parseInt(c.substring(4, 6), 16);
-  return (r * 299 + g * 587 + b * 114) / 1000 > 150;
 }

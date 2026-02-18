@@ -11,10 +11,18 @@ export interface Faluche {
   provinceNaissance?: { nom: string; couleurs: [string, string] };
 }
 
-export interface Circulaire {
-  discipline: string;
-  couleurPrincipale: string;
+export interface CursusSegment {
+  filiere: string;
+  couleur: string;
   matiere: Matiere;
+  annees: number;
+}
+
+export interface Circulaire {
+  segments: CursusSegment[];
+  baptemeIndex: number;
+  surnom: string;
+  anneeBac: number;
 }
 
 export interface Velours {
@@ -44,9 +52,13 @@ export function createDefaultFaluche(): Faluche {
     ville: 'amiens',
     dateCreation: new Date().toISOString(),
     circulaire: {
-      discipline: "Écoles d'ingénieurs",
-      couleurPrincipale: '#4169E1',
-      matiere: 'satin',
+      segments: [
+        { filiere: 'Sciences', couleur: '#7B2D8E', matiere: 'satin', annees: 2 },
+        { filiere: "Écoles d'ingénieurs", couleur: '#4169E1', matiere: 'satin', annees: 3 },
+      ],
+      baptemeIndex: 1,
+      surnom: '',
+      anneeBac: 2018,
     },
     villeEtude: { nom: 'Compiègne', couleurs: ['#FFD700', '#4169E1'] },
     villeNaissance: { nom: 'Beauvais', couleurs: ['#CC0000', '#FFFFFF'] },

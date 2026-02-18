@@ -1,26 +1,17 @@
 import { useState } from 'react';
-import type { Faluche } from './data/types';
+import type { Faluche, Circulaire } from './data/types';
 import { createDefaultFaluche } from './data/types';
-import type { Filiere } from './data/filieres';
 import type { Ville, Province } from './data/villes';
 import { FaluchePreview } from './components/FaluchePreview';
-import { DisciplineSelector } from './components/DisciplineSelector';
+import { CursusEditor } from './components/CursusEditor';
 import { VilleSelector } from './components/VilleSelector';
 import { SaveLoadButtons } from './components/SaveLoadButtons';
 
 function App() {
   const [faluche, setFaluche] = useState<Faluche>(createDefaultFaluche);
 
-  function handleDisciplineChange(filiere: Filiere) {
-    setFaluche((prev) => ({
-      ...prev,
-      circulaire: {
-        ...prev.circulaire,
-        discipline: filiere.nom,
-        couleurPrincipale: filiere.couleur,
-        matiere: filiere.matiere,
-      },
-    }));
+  function handleCirculaireChange(circulaire: Circulaire) {
+    setFaluche((prev) => ({ ...prev, circulaire }));
   }
 
   function handleVilleEtudeChange(ville: Ville) {
@@ -48,10 +39,12 @@ function App() {
     setFaluche(loaded);
   }
 
+  const bapteme = faluche.circulaire.segments[faluche.circulaire.baptemeIndex];
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <header className="border-b border-gray-700 px-6 py-4">
-        <h1 className="text-2xl font-bold">Simulateur de Faluche — Code Amiens</h1>
+        <h1 className="text-2xl font-bold">Simulateur de Faluche — Code Compiegne</h1>
       </header>
 
       <main className="mx-auto flex max-w-5xl flex-col gap-8 p-6 lg:flex-row">
@@ -62,9 +55,9 @@ function App() {
 
         {/* Config panel */}
         <aside className="flex w-full flex-col gap-6 lg:w-80">
-          <DisciplineSelector
-            selected={faluche.circulaire.discipline}
-            onChange={handleDisciplineChange}
+          <CursusEditor
+            circulaire={faluche.circulaire}
+            onChange={handleCirculaireChange}
           />
 
           <VilleSelector
@@ -79,37 +72,39 @@ function App() {
           <SaveLoadButtons faluche={faluche} onLoad={handleLoad} />
 
           {/* Summary */}
-          {(faluche.circulaire.discipline || faluche.villeNaissance) && (
-            <div className="rounded-lg border border-gray-700 bg-gray-800 p-4 text-sm">
-              <p className="mb-2 font-semibold text-gray-300">Résumé</p>
-              {faluche.circulaire.discipline && (
-                <p>
-                  <span className="text-gray-400">Discipline :</span>{' '}
-                  {faluche.circulaire.discipline}
-                  <span
-                    className="ml-2 inline-block h-3 w-3 rounded-full border border-gray-500"
-                    style={{ backgroundColor: faluche.circulaire.couleurPrincipale }}
-                  />
-                </p>
-              )}
+          <div className="rounded-lg border border-gray-700 bg-gray-800 p-4 text-sm">
+            <p className="mb-2 font-semibold text-gray-300">Résumé</p>
+            {bapteme && (
               <p>
-                <span className="text-gray-400">Ville d'étude :</span>{' '}
-                {faluche.villeEtude.nom}
+                <span className="text-gray-400">Baptême :</span>{' '}
+                {bapteme.filiere}
+                <span
+                  className="ml-2 inline-block h-3 w-3 rounded-full border border-gray-500"
+                  style={{ backgroundColor: bapteme.couleur }}
+                />
               </p>
-              {faluche.villeNaissance && (
-                <p>
-                  <span className="text-gray-400">Ville de naissance :</span>{' '}
-                  {faluche.villeNaissance.nom}
-                </p>
-              )}
-              {faluche.provinceNaissance && (
-                <p>
-                  <span className="text-gray-400">Province :</span>{' '}
-                  {faluche.provinceNaissance.nom}
-                </p>
-              )}
-            </div>
-          )}
+            )}
+            <p>
+              <span className="text-gray-400">Cursus :</span>{' '}
+              {faluche.circulaire.segments.map(s => s.filiere).join(' → ')}
+            </p>
+            <p>
+              <span className="text-gray-400">Ville d'étude :</span>{' '}
+              {faluche.villeEtude.nom}
+            </p>
+            {faluche.villeNaissance && (
+              <p>
+                <span className="text-gray-400">Ville de naissance :</span>{' '}
+                {faluche.villeNaissance.nom}
+              </p>
+            )}
+            {faluche.provinceNaissance && (
+              <p>
+                <span className="text-gray-400">Province :</span>{' '}
+                {faluche.provinceNaissance.nom}
+              </p>
+            )}
+          </div>
         </aside>
       </main>
     </div>
