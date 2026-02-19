@@ -1,4 +1,5 @@
-import type { Faluche } from '../data/types';
+import { useRef } from 'react';
+import type { Faluche, Insigne } from '../data/types';
 import { Velours } from './Velours';
 import { CirculaireBar } from './CirculaireBar';
 import { RubanPendant, getRubanPosition } from './RubanPendant';
@@ -6,6 +7,9 @@ import { Ecusson } from './Ecusson';
 
 interface FaluchePreviewProps {
   faluche: Faluche;
+  selectedInsigneId: string | null;
+  onSelectInsigne: (id: string | null) => void;
+  onMoveInsigne: (id: string, pos: { x: number; y: number }) => void;
 }
 
 const SVG_WIDTH = 600;
@@ -24,13 +28,9 @@ const ECUSSON_SIZE = 34;
 const CIRCLE = { cx: CIRCLE_CX, cy: CIRCLE_CY, r: CIRCLE_RADIUS };
 
 // Ribbon offsets (horizontal distance from cx)
-// D and B: measured at junction height, start from the "thirds" of the frontal: r/3 ≈ 67
-const OFFSET_D = Math.round(CIRCLE_RADIUS / 3);  // Study city (left, yshaped)
-const OFFSET_B = Math.round(CIRCLE_RADIUS / 3);  // Province (right, yshaped, symmetric of D)
-// A: center offset so its left perpendicular edge touches B's right edge
-// B right edge = OFFSET_B + halfW. A left perp edge = OFFSET_A - halfW * cos(60°).
-// Contact: OFFSET_A = OFFSET_B + halfW + halfW * cos(60°)
-const OFFSET_A = OFFSET_B + RUBAN_WIDTH / 2 + RUBAN_WIDTH / 2 + 4; // Birth city (right, diagonal)
+const OFFSET_D = Math.round(CIRCLE_RADIUS / 3);
+const OFFSET_B = Math.round(CIRCLE_RADIUS / 3);
+const OFFSET_A = OFFSET_B + RUBAN_WIDTH / 2 + RUBAN_WIDTH / 2 + 4;
 
 // Ecusson placement ratios along the ribbon (0=start, 1=end)
 const ECUSSON_RATIO_D = 0.70;
@@ -54,7 +54,8 @@ function branchEnd(angleDeg: number): { x: number; y: number } {
 const leftBranch = branchEnd(-60);
 const rightBranch = branchEnd(60);
 
-export function FaluchePreview({ faluche }: FaluchePreviewProps) {
+export function FaluchePreview({ faluche, selectedInsigneId, onSelectInsigne, onMoveInsigne }: FaluchePreviewProps) {
+  const svgRef = useRef<SVGSVGElement>(null);
   const villeEtude = faluche.villeEtude;
 
   // Ecusson positions on the ribbons
@@ -68,6 +69,7 @@ export function FaluchePreview({ faluche }: FaluchePreviewProps) {
 
   return (
     <svg
+      ref={svgRef}
       viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
       className="w-full max-w-lg"
     >
@@ -101,8 +103,17 @@ export function FaluchePreview({ faluche }: FaluchePreviewProps) {
         120°
       </text>
 
-      {/* Velours (black circle) */}
-      <Velours cx={CIRCLE_CX} cy={CIRCLE_CY} radius={CIRCLE_RADIUS} />
+      {/* Velours (black circle) + insignes */}
+      <Velours
+        cx={CIRCLE_CX}
+        cy={CIRCLE_CY}
+        radius={CIRCLE_RADIUS}
+        insignes={faluche.velours.insignes}
+        selectedId={selectedInsigneId}
+        onSelect={onSelectInsigne}
+        onMove={onMoveInsigne}
+        svgRef={svgRef}
+      />
 
       {/* Ruban D — Ville d'étude (left, Y-shaped) */}
       <RubanPendant
@@ -115,7 +126,7 @@ export function FaluchePreview({ faluche }: FaluchePreviewProps) {
         circle={CIRCLE}
       />
 
-      {/* Ruban A — Ville de naissance (right, diagonal) — rendered first so B appears on top */}
+      {/* Ruban A — Ville de naissance (right, diagonal) */}
       {faluche.villeNaissance && (
         <RubanPendant
           id="ville-naissance"

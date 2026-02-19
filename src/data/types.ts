@@ -73,7 +73,9 @@ export interface Insigne {
   id: string;
   label: string;
   retourne?: boolean;
-  position: { x: number; y: number };
+  position: { x: number; y: number };  // normalized [-1, 1] relative to circle center/radius
+  annee?: number;                       // for ciseaux: year of baptism
+  nombreCousu?: number;                 // for ciseaux: number of faluches sewn (superscript)
 }
 
 export function createDefaultFaluche(): Faluche {

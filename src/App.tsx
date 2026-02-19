@@ -1,17 +1,38 @@
 import { useState } from 'react';
-import type { Faluche, Circulaire } from './data/types';
+import type { Faluche, Circulaire, Insigne } from './data/types';
 import { createDefaultFaluche } from './data/types';
 import type { Ville, Province } from './data/villes';
 import { FaluchePreview } from './components/FaluchePreview';
 import { CursusEditor } from './components/CursusEditor';
 import { VilleSelector } from './components/VilleSelector';
+import { InsignesEditor } from './components/InsignesEditor';
 import { SaveLoadButtons } from './components/SaveLoadButtons';
 
 function App() {
   const [faluche, setFaluche] = useState<Faluche>(createDefaultFaluche);
+  const [selectedInsigneId, setSelectedInsigneId] = useState<string | null>(null);
 
   function handleCirculaireChange(circulaire: Circulaire) {
     setFaluche((prev) => ({ ...prev, circulaire }));
+  }
+
+  function handleInsignesChange(insignes: Insigne[]) {
+    setFaluche((prev) => ({
+      ...prev,
+      velours: { ...prev.velours, insignes },
+    }));
+  }
+
+  function handleMoveInsigne(id: string, position: { x: number; y: number }) {
+    setFaluche((prev) => ({
+      ...prev,
+      velours: {
+        ...prev.velours,
+        insignes: prev.velours.insignes.map((ins) =>
+          ins.id === id ? { ...ins, position } : ins
+        ),
+      },
+    }));
   }
 
   function handleVilleEtudeChange(ville: Ville) {
@@ -36,6 +57,17 @@ function App() {
   }
 
   function handleLoad(loaded: Faluche) {
+    // Guard for old JSON files without insignes
+    if (loaded.velours) {
+      loaded.velours.insignes = loaded.velours.insignes ?? [];
+      // Migrate old single "cochon" to new split ids
+      loaded.velours.insignes = loaded.velours.insignes.map((ins) => {
+        if (ins.id === 'cochon') {
+          return { ...ins, id: ins.retourne ? 'cochon_integre' : 'cochon_integrateur', label: ins.retourne ? 'Cochon ↓ (a été intégré·e)' : 'Cochon ↑ (a intégré)' };
+        }
+        return ins;
+      });
+    }
     setFaluche(loaded);
   }
 
@@ -50,7 +82,12 @@ function App() {
       <main className="mx-auto flex max-w-5xl flex-col gap-8 p-6 lg:flex-row">
         {/* Preview */}
         <section className="flex flex-1 items-start justify-center">
-          <FaluchePreview faluche={faluche} />
+          <FaluchePreview
+            faluche={faluche}
+            selectedInsigneId={selectedInsigneId}
+            onSelectInsigne={setSelectedInsigneId}
+            onMoveInsigne={handleMoveInsigne}
+          />
         </section>
 
         {/* Config panel */}
@@ -58,6 +95,13 @@ function App() {
           <CursusEditor
             circulaire={faluche.circulaire}
             onChange={handleCirculaireChange}
+          />
+
+          <InsignesEditor
+            insignes={faluche.velours.insignes}
+            onChange={handleInsignesChange}
+            selectedId={selectedInsigneId}
+            onSelect={setSelectedInsigneId}
           />
 
           <VilleSelector
@@ -102,6 +146,12 @@ function App() {
               <p>
                 <span className="text-gray-400">Province :</span>{' '}
                 {faluche.provinceNaissance.nom}
+              </p>
+            )}
+            {faluche.velours.insignes.length > 0 && (
+              <p>
+                <span className="text-gray-400">Insignes :</span>{' '}
+                {faluche.velours.insignes.map(i => i.label).join(', ')}
               </p>
             )}
           </div>
