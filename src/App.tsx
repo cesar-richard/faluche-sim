@@ -137,7 +137,7 @@ function App() {
         title="Cursus"
         badge={cursusBadge}
         active={activeSection}
-        onToggle={setActiveSection}
+        onToggle={(id) => setActiveSection(id as Section)}
       >
         <CursusEditor
           circulaire={faluche.circulaire}
@@ -150,7 +150,7 @@ function App() {
         title="Insignes"
         badge={insignesBadge}
         active={activeSection}
-        onToggle={setActiveSection}
+        onToggle={(id) => setActiveSection(id as Section)}
       >
         <InsignesEditor
           insignes={faluche.velours.insignes}
@@ -165,7 +165,7 @@ function App() {
         title="Villes & Provinces"
         badge={villesBadge}
         active={activeSection}
-        onToggle={setActiveSection}
+        onToggle={(id) => setActiveSection(id as Section)}
       >
         <VilleSelector
           villeEtude={faluche.villeEtude.nom}
@@ -181,7 +181,7 @@ function App() {
         id="fichier"
         title="Fichier"
         active={activeSection}
-        onToggle={setActiveSection}
+        onToggle={(id) => setActiveSection(id as Section)}
       >
         <SaveLoadButtons faluche={faluche} onLoad={handleLoad} onShare={handleShare} />
       </AccordionSection>

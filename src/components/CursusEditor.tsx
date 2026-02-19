@@ -230,7 +230,7 @@ export function CursusEditor({ circulaire, onChange }: CursusEditorProps) {
 
 // --- Segment sub-editor ---
 
-function SegmentEditor({ seg, index, isBapteme, isFirst, isLast, segmentCount, onFiliereChange, onAnneesChange, onBaptemeSelect, onMove, onRemove, onSegmentUpdate, onAnnotationUpdate }: {
+function SegmentEditor({ seg, index: _index, isBapteme, isFirst, isLast, segmentCount, onFiliereChange, onAnneesChange, onBaptemeSelect, onMove, onRemove, onSegmentUpdate, onAnnotationUpdate }: {
   seg: CursusSegment;
   index: number;
   isBapteme: boolean;

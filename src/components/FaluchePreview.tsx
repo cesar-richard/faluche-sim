@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import type { Faluche, Insigne } from '../data/types';
+import type { Faluche } from '../data/types';
 import { Velours } from './Velours';
 import { CirculaireBar } from './CirculaireBar';
 import { RubanPendant, getRubanPosition } from './RubanPendant';

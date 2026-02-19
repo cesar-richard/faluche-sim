@@ -208,7 +208,7 @@ function expandFaluche(cf: CompactFaluche): Faluche {
 async function compress(data: Uint8Array): Promise<Uint8Array> {
   const cs = new CompressionStream('deflate-raw');
   const writer = cs.writable.getWriter();
-  writer.write(data);
+  writer.write(data as Uint8Array<ArrayBuffer>);
   writer.close();
   const reader = cs.readable.getReader();
   const chunks: Uint8Array[] = [];
@@ -230,7 +230,7 @@ async function compress(data: Uint8Array): Promise<Uint8Array> {
 async function decompress(data: Uint8Array): Promise<Uint8Array> {
   const ds = new DecompressionStream('deflate-raw');
   const writer = ds.writable.getWriter();
-  writer.write(data);
+  writer.write(data as Uint8Array<ArrayBuffer>);
   writer.close();
   const reader = ds.readable.getReader();
   const chunks: Uint8Array[] = [];

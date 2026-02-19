@@ -18,18 +18,6 @@ const SURNOM_ZONE = 0.20;
 const INITIALES_ZONE = 0.06;
 const BAC_ZONE = 0.10;
 
-function isLightColor(hex: string): boolean {
-  const c = hex.replace('#', '');
-  const r = parseInt(c.substring(0, 2), 16);
-  const g = parseInt(c.substring(2, 4), 16);
-  const b = parseInt(c.substring(4, 6), 16);
-  return (r * 299 + g * 587 + b * 114) / 1000 > 150;
-}
-
-function getTextColor(bg: string): string {
-  return isLightColor(bg) ? '#333' : '#fff';
-}
-
 function getTypeBacStr(typeBac: TypeBac): string {
   switch (typeBac) {
     case 'general': return 'Ɣ';
@@ -262,7 +250,7 @@ export function CirculaireBar({ x, y, width, height, circulaire }: CirculaireBar
 function YearRender({ slot, cx, cy, w, h, barY, moivre }: {
   slot: YearSlot; cx: number; cy: number; w: number; h: number; barY: number; moivre: 'public' | 'prive';
 }) {
-  const { annotation, isFirstYearOverall, seg } = slot;
+  const { annotation, isFirstYearOverall } = slot;
   const isAnnexe = annotation.annexe;
   const baseStarSize = isAnnexe ? h * 0.12 : h * 0.18;
   const starSize = Math.min(baseStarSize, w * 0.45);
@@ -270,7 +258,7 @@ function YearRender({ slot, cx, cy, w, h, barY, moivre }: {
   const starColor = annotation.redoublement ? '#C0C0C0' : '#FFD700';
   const starStroke = annotation.redoublement ? '#808080' : '#B8860B';
 
-  const elements: JSX.Element[] = [];
+  const elements: React.JSX.Element[] = [];
 
   // Moivre: full-height diagonal stripe
   if (isFirstYearOverall) {

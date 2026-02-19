@@ -17,7 +17,7 @@ export const AMIENS: Ville = {
 };
 
 // Villes de France avec couleurs héraldiques (source: faluche.app + blasons Wikipedia)
-export const VILLES: Ville[] = [
+export const VILLES: Ville[] = ([
   // A
   { nom: 'Agen', couleurs: ['#CC0000', '#FFFFFF'], province: 'Guyenne' },
   { nom: 'Aix-en-Provence', couleurs: ['#FFD700', '#CC0000'], province: 'Provence' },
@@ -162,9 +162,9 @@ export const VILLES: Ville[] = [
   { nom: 'Villeneuve-d\'Ascq', couleurs: ['#FFD700', '#CC0000'], province: 'Flandre' },
   { nom: 'Villeurbanne', couleurs: ['#CC0000', '#FFD700'], province: 'Lyonnais' },
   { nom: 'Vitry-sur-Seine', couleurs: ['#FFFFFF', '#228B22'], province: 'Île-de-France' },
-].sort((a, b) => a.nom.localeCompare(b.nom, 'fr'));
+] as Ville[]).sort((a, b) => a.nom.localeCompare(b.nom, 'fr'));
 
-export const PROVINCES: Province[] = [
+export const PROVINCES: Province[] = ([
   { nom: 'Alsace', couleurs: ['#CC0000', '#FFFFFF'] },
   { nom: 'Angoumois', couleurs: ['#CC0000', '#FFD700'] },
   { nom: 'Anjou', couleurs: ['#CC0000', '#4169E1'] },
@@ -209,4 +209,4 @@ export const PROVINCES: Province[] = [
   { nom: 'Savoie', couleurs: ['#CC0000', '#FFFFFF'] },
   { nom: 'Touraine', couleurs: ['#4169E1', '#CC0000'] },
   { nom: 'Vivarais', couleurs: ['#4169E1', '#FFD700'] },
-].sort((a, b) => a.nom.localeCompare(b.nom, 'fr'));
+] as Province[]).sort((a, b) => a.nom.localeCompare(b.nom, 'fr'));

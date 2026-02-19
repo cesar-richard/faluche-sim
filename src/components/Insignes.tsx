@@ -54,7 +54,7 @@ export function WreathInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B886
   };
 
   // Right branch (laurel): narrow pointed leaves, t from 0 to ~0.9
-  const laurelLeaves: JSX.Element[] = [];
+  const laurelLeaves: React.JSX.Element[] = [];
   const laurelPositions = [0.15, 0.35, 0.55, 0.75, 0.92];
   for (let i = 0; i < laurelPositions.length; i++) {
     const t = laurelPositions[i];
@@ -78,7 +78,7 @@ export function WreathInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B886
   }
 
   // Left branch (oak): broader, rounder lobed leaves, t from 2 down to ~1.1
-  const oakLeaves: JSX.Element[] = [];
+  const oakLeaves: React.JSX.Element[] = [];
   const oakPositions = [1.85, 1.65, 1.45, 1.25, 1.08];
   for (let i = 0; i < oakPositions.length; i++) {
     const t = oakPositions[i];
@@ -270,7 +270,7 @@ export function EtoileFoudreInsigne({ cx, cy, size, color = '#FFD700', stroke = 
   // Lightning bolts: zigzag lines radiating outward on each side.
   // Each bolt goes from near the star outward, zigzagging vertically.
   // Multiple bolts per side, fanning out at different vertical angles.
-  const bolts: JSX.Element[] = [];
+  const bolts: React.JSX.Element[] = [];
   const numBolts = 5; // bolts per side
   const zigSegments = 4; // number of zigzag segments per bolt
   const zigAmp = s * 0.06; // zigzag amplitude (half-height of each zig)
@@ -403,7 +403,7 @@ export function CaduceeMercureInsigne({ cx, cy, size, color = '#FFD700', stroke 
 }
 
 /** Scales of justice — ⚖ Droit / AES */
-export function ScalesInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
+export function ScalesInsigne({ cx, cy, size, color = '#FFD700', stroke: _stroke = '#B8860B' }: InsigneProps) {
   const s = size;
   return (
     <g transform={`translate(${cx},${cy})`}>
@@ -424,7 +424,7 @@ export function ScalesInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B886
 }
 
 /** Atom — ⚛ Sciences */
-export function AtomInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
+export function AtomInsigne({ cx, cy, size, color = '#FFD700', stroke: _stroke = '#B8860B' }: InsigneProps) {
   const s = size;
   return (
     <g transform={`translate(${cx},${cy})`}>
@@ -504,7 +504,7 @@ export function MusicNoteInsigne({ cx, cy, size, color = '#FFD700' }: InsignePro
 }
 
 /** Wine glass — Oenologie */
-export function WineGlassInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
+export function WineGlassInsigne({ cx, cy, size, color = '#FFD700', stroke: _stroke = '#B8860B' }: InsigneProps) {
   const s = size;
   return (
     <g transform={`translate(${cx},${cy})`}>
@@ -695,7 +695,7 @@ export function DollarInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B886
 
 // --- Filière emblème mapper ---
 
-const FILIERE_INSIGNE_MAP: Record<string, (props: InsigneProps) => JSX.Element> = {
+const FILIERE_INSIGNE_MAP: Record<string, (props: InsigneProps) => React.JSX.Element> = {
   'Chirurgie dentaire': ToothInsigne,
   'Études courtes de santé': CrossInsigne,
   'Médecine': CaduceeMedInsigne,

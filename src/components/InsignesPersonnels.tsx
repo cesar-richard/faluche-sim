@@ -8,8 +8,7 @@ interface InsigneProps {
   stroke?: string;
 }
 
-function ChameauInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function ChameauInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   // Dromedary camel walking right — single hump, long legs, long neck, small head
   // Centered on (cx, cy), overall bounding box roughly size x size
@@ -80,8 +79,7 @@ function ChameauInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }:
   );
 }
 
-function CochonInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function CochonInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   // Pig / wild boar walking right — stocky body, short legs, snout, small curly tail
   const sw = s * 0.06;
@@ -134,8 +132,7 @@ function CochonInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: 
   );
 }
 
-function SqueletteInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function SqueletteInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   // Full human skeleton, front-facing, standing
   const sw = s * 0.045;
@@ -260,8 +257,7 @@ function SqueletteInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' 
   );
 }
 
-function CiseauxInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function CiseauxInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   // Open scissors with two crossing blades and round finger holes
   // Mounted on a small blue ribbon behind
@@ -325,8 +321,7 @@ function CiseauxInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }:
  */
 
 /** Camera — Appareil photo (amour de la photographie) */
-function AppareilPhotoInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function AppareilPhotoInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -351,8 +346,7 @@ function AppareilPhotoInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B886
 }
 
 /** Bust of Bacchus with hole — Bacchus troué (personne abstème) */
-function BacchusTroueInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function BacchusTroueInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -392,8 +386,7 @@ function BacchusTroueInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860
 }
 
 /** Corinthian helmet — Casque de Périclès (amour de l'Histoire) */
-function CasquePericlesInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function CasquePericlesInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -434,8 +427,7 @@ function CasquePericlesInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B88
 }
 
 /** Beer mug — Chope de bière (amour de la bonne bière) */
-function ChopeBiereInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function ChopeBiereInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -465,8 +457,7 @@ function ChopeBiereInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B'
 }
 
 /** Owl — Chouette (oiseau de nuit) */
-function ChouetteInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function ChouetteInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -505,12 +496,11 @@ function ChouetteInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }
 }
 
 /** Wheat ear — Épi de blé (radin) */
-function EpiDeBleInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function EpiDeBleInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   // Kernels alternate left and right along the stem
-  const kernels: JSX.Element[] = [];
+  const kernels: React.JSX.Element[] = [];
   const numPairs = 5;
   for (let i = 0; i < numPairs; i++) {
     const yPos = s * 0.5 - i * s * 0.2;
@@ -545,12 +535,11 @@ function EpiDeBleInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }
 }
 
 /** Wheat ear crossed with sickle — Épi de blé croisé faucille (chanceux aux examens) */
-function EpiFaucilleInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function EpiFaucilleInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   // Wheat kernels (same as EpiDeBle, slightly offset right)
-  const kernels: JSX.Element[] = [];
+  const kernels: React.JSX.Element[] = [];
   const numPairs = 5;
   const wheatX = s * 0.1;
   for (let i = 0; i < numPairs; i++) {
@@ -596,8 +585,7 @@ function EpiFaucilleInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B
 
 /** Star with lightning bolt — Étoile et foudre perso (amour des nouvelles technologies)
  * Personal velours version: a single prominent zigzag bolt through the star. */
-function EtoileFoudrePersoInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function EtoileFoudrePersoInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   // 5-pointed star
@@ -629,8 +617,7 @@ function EtoileFoudrePersoInsigne({ cx, cy, size, color = '#FFD700', stroke = '#
 }
 
 /** Horseshoe — Fer à cheval (chanceux) */
-function FerAChevalInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function FerAChevalInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -663,8 +650,7 @@ function FerAChevalInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B'
 }
 
 /** Grape vine leaf — Feuille de vigne (perte de la virginité) */
-function FeuilleVigneInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function FeuilleVigneInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -719,8 +705,7 @@ function FeuilleVigneInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860
  */
 
 /** Fork — fourchette (repas, gastronomie) */
-function FourchetteInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function FourchetteInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = s * 0.06;
   return (
@@ -749,8 +734,7 @@ function FourchetteInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B'
 }
 
 /** Globe on green ribbon — globe terrestre (voyages, international) */
-function GlobeVertInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function GlobeVertInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = s * 0.06;
   const gr = s * 0.42; // globe radius
@@ -772,8 +756,7 @@ function GlobeVertInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' 
 }
 
 /** Grape cluster — grappe de raisin (oenologie, vendanges) */
-function GrappeRaisinInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function GrappeRaisinInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = s * 0.06;
   const gr = s * 0.135; // grape radius
@@ -813,8 +796,7 @@ function GrappeRaisinInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860
 }
 
 /** Lyre — lyre / harpe (musique, arts) */
-function LyreInsignePerso({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function LyreInsignePerso({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = s * 0.06;
   return (
@@ -854,8 +836,7 @@ function LyreInsignePerso({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' 
 }
 
 /** Comedy mask — masque de comédie (théâtre) */
-function MasqueComedieInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function MasqueComedieInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = s * 0.06;
   return (
@@ -891,8 +872,7 @@ function MasqueComedieInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B886
 }
 
 /** Artist palette — palette de peintre (beaux-arts) */
-function PaletteInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function PaletteInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = s * 0.06;
   return (
@@ -919,8 +899,7 @@ function PaletteInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }:
 }
 
 /** Hangman / hanged person — pendu (jeu du pendu, bizutage) */
-function PenduInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function PenduInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = s * 0.06;
   // Gallows offset to the left, figure hangs from the right
@@ -955,8 +934,7 @@ function PenduInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
 }
 
 /** Quill / feather — plume (écriture, lettres) */
-function PlumeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function PlumeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = s * 0.06;
   return (
@@ -995,8 +973,7 @@ function PlumeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
 }
 
 /** Sphinx — sphinx égyptien (sagesse, énigme) */
-function SphinxInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function SphinxInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = s * 0.06;
   return (
@@ -1053,8 +1030,7 @@ function SphinxInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: 
 // --- Partenaire (4) ---
 
 /** Sword — Epee */
-function EpeeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function EpeeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -1086,8 +1062,7 @@ function EpeeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
 }
 
 /** Arrow — Fleche */
-function FlecheInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function FlecheInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -1124,8 +1099,7 @@ function FlecheInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: 
 }
 
 /** Metal file / rasp — Lime */
-function LimeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function LimeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -1169,8 +1143,7 @@ function LimeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
 }
 
 /** Pansy flower — Pensee */
-function PenseeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function PenseeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -1207,8 +1180,7 @@ function PenseeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: 
 // --- Grand Maitre (7) ---
 
 /** Olympic rings — AnneauxOlympiques */
-function AnneauxOlympiquesInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function AnneauxOlympiquesInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   const r = s * 0.22; // ring radius
@@ -1248,8 +1220,7 @@ function AnneauxOlympiquesInsigne({ cx, cy, size, color = '#FFD700', stroke = '#
 }
 
 /** Bust of Bacchus / Dionysus — Bacchus */
-function BacchusInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function BacchusInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -1303,8 +1274,7 @@ function BacchusInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }:
 }
 
 /** Bordeaux wine bottle — BouteilleBordeaux */
-function BouteilleBordeauxInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function BouteilleBordeauxInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -1340,8 +1310,7 @@ function BouteilleBordeauxInsigne({ cx, cy, size, color = '#FFD700', stroke = '#
 }
 
 /** Champagne bottle — BouteilleChampagne */
-function BouteilleChampagneInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function BouteilleChampagneInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -1380,8 +1349,7 @@ function BouteilleChampagneInsigne({ cx, cy, size, color = '#FFD700', stroke = '
 }
 
 /** Treble clef — CleSol */
-function CleSolInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function CleSolInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   // Classic treble clef as a single path, centered and scaled
@@ -1425,8 +1393,7 @@ function CleSolInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: 
 }
 
 /** Rooster — Coq */
-function CoqInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function CoqInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -1504,8 +1471,7 @@ function CoqInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
 }
 
 /** Hunting horn — CorDeChasse */
-function CorDeChasseInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function CorDeChasseInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   // Circular coiled horn, like a simplified French hunting horn
@@ -1551,8 +1517,7 @@ function CorDeChasseInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B
  */
 
 /** Fork on a blue ribbon — Fourchette Bleue */
-function FourchetteBleueInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function FourchetteBleueInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -1574,8 +1539,7 @@ function FourchetteBleueInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8
 }
 
 /** Axe / Hatchet — Hache */
-function HacheInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function HacheInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -1604,8 +1568,7 @@ function HacheInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
 }
 
 /** Mammoth — side profile walking right */
-function MammouthInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function MammouthInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -1656,8 +1619,7 @@ function MammouthInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }
 }
 
 /** Elephant — side profile walking right */
-function PachydermeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function PachydermeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -1707,8 +1669,7 @@ function PachydermeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B'
 }
 
 /** Open umbrella — dome canopy, vertical shaft, curved handle */
-function ParapluieOuvertInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function ParapluieOuvertInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -1745,8 +1706,7 @@ function ParapluieOuvertInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8
 }
 
 /** Closed umbrella — narrow elongated shape, folded fabric */
-function ParapluieFermeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function ParapluieFermeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -1788,8 +1748,7 @@ function ParapluieFermeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B88
 }
 
 /** Hen / chicken — standing profile facing right */
-function PouleInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function PouleInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -1847,8 +1806,7 @@ function PouleInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
 }
 
 /** Monkey — sitting profile, curled tail */
-function SingeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function SingeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   return (
@@ -1910,8 +1868,7 @@ function SingeInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
 }
 
 /** Coin with a hole — Sou Troue */
-function SouTroueInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function SouTroueInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   // Number of ridges around the edge
@@ -1940,8 +1897,7 @@ function SouTroueInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }
 }
 
 /** Steering wheel — circle with 3 spokes and center hub */
-function VolantInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: {
-}) {
+function VolantInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
   const s = size / 2;
   const sw = size * 0.03;
   const rimR = s * 0.75;
@@ -1969,7 +1925,7 @@ function VolantInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: 
 
 
 // Dispatch map: catalog id → SVG component
-const INSIGNE_COMPONENTS: Record<string, (props: InsigneProps) => JSX.Element> = {
+const INSIGNE_COMPONENTS: Record<string, (props: InsigneProps) => React.JSX.Element> = {
   // Obligatoires Amiens
   chameau: ChameauInsigne,
   cochon: CochonInsigne,
