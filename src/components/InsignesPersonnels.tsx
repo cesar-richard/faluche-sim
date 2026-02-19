@@ -1972,8 +1972,7 @@ function VolantInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: 
 const INSIGNE_COMPONENTS: Record<string, (props: InsigneProps) => JSX.Element> = {
   // Obligatoires Amiens
   chameau: ChameauInsigne,
-  cochon_integre: CochonInsigne,
-  cochon_integrateur: CochonInsigne,
+  cochon: CochonInsigne,
   squelette: SqueletteInsigne,
   ciseaux: CiseauxInsigne,
   // Auto-attribués
@@ -2030,8 +2029,9 @@ function PlaceholderInsigne({ cx, cy, size, color = '#FFD700' }: InsigneProps & 
   );
 }
 
-export function InsignePersonnel({ id, retourne, cx, cy, size, annee, nombreCousu }: {
+export function InsignePersonnel({ id, svgId, retourne, cx, cy, size, annee, nombreCousu }: {
   id: string;
+  svgId?: string;
   retourne?: boolean;
   cx: number;
   cy: number;
@@ -2039,7 +2039,7 @@ export function InsignePersonnel({ id, retourne, cx, cy, size, annee, nombreCous
   annee?: number;
   nombreCousu?: number;
 }) {
-  const Component = INSIGNE_COMPONENTS[id];
+  const Component = INSIGNE_COMPONENTS[svgId ?? id];
   const transform = retourne ? `rotate(180, ${cx}, ${cy})` : undefined;
 
   // Ciseaux special: blue ribbon behind

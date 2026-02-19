@@ -72,6 +72,7 @@ export interface RubanPendant {
 export interface Insigne {
   id: string;
   label: string;
+  svgId?: string;                       // maps to SVG component when different from id
   retourne?: boolean;
   position: { x: number; y: number };  // normalized [-1, 1] relative to circle center/radius
   annee?: number;                       // for ciseaux: year of baptism

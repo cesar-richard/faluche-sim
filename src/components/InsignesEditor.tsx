@@ -30,6 +30,7 @@ export function InsignesEditor({ insignes, onChange, selectedId, onSelect }: Ins
     const newInsigne: Insigne = {
       id: def.id,
       label: def.label,
+      ...(def.svgId ? { svgId: def.svgId } : {}),
       position: defaultPosition(insignes.length),
       ...(def.defaultRetourne ? { retourne: true } : {}),
       ...(def.hasAnnee ? { annee: new Date().getFullYear() } : {}),
@@ -41,10 +42,6 @@ export function InsignesEditor({ insignes, onChange, selectedId, onSelect }: Ins
   function removeInsigne(id: string) {
     onChange(insignes.filter(i => i.id !== id));
     if (selectedId === id) onSelect(null);
-  }
-
-  function toggleRetourne(id: string) {
-    onChange(insignes.map(i => i.id === id ? { ...i, retourne: !i.retourne } : i));
   }
 
   function updateAnnee(id: string, annee: number) {
@@ -62,7 +59,6 @@ export function InsignesEditor({ insignes, onChange, selectedId, onSelect }: Ins
   function getSignification(insigne: Insigne): string {
     const def = getDef(insigne.id);
     if (!def) return '';
-    if (insigne.retourne && def.labelEnvers) return def.labelEnvers;
     return def.labelEndroit ?? '';
   }
 
@@ -84,21 +80,12 @@ export function InsignesEditor({ insignes, onChange, selectedId, onSelect }: Ins
                 onClick={() => onSelect(insigne.id)}
               >
                 <svg width={24} height={24} viewBox="-14 -14 28 28">
-                  <InsignePersonnel id={insigne.id} retourne={insigne.retourne} cx={0} cy={0} size={22} annee={insigne.annee} nombreCousu={insigne.nombreCousu} />
+                  <InsignePersonnel id={insigne.id} svgId={insigne.svgId} retourne={insigne.retourne} cx={0} cy={0} size={22} annee={insigne.annee} nombreCousu={insigne.nombreCousu} />
                 </svg>
                 <div className="flex-1 min-w-0">
                   <div className="font-medium text-gray-200 truncate">{insigne.label}</div>
                   <div className="text-xs text-gray-400 truncate">{getSignification(insigne)}</div>
                 </div>
-                {def?.hasRetourne && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); toggleRetourne(insigne.id); }}
-                    className="rounded bg-gray-600 px-1.5 py-0.5 text-xs text-gray-300 hover:bg-gray-500"
-                    title={insigne.retourne ? 'Remettre à l\'endroit' : 'Retourner'}
-                  >
-                    {insigne.retourne ? '↑' : '↓'}
-                  </button>
-                )}
                 {def?.hasAnnee && (
                   <input
                     type="number"
@@ -159,7 +146,7 @@ export function InsignesEditor({ insignes, onChange, selectedId, onSelect }: Ins
                         onClick={() => !isActive && addInsigne(def)}
                       >
                         <svg width={20} height={20} viewBox="-12 -12 24 24">
-                          <InsignePersonnel id={def.id} cx={0} cy={0} size={18} />
+                          <InsignePersonnel id={def.id} svgId={def.svgId} retourne={def.defaultRetourne} cx={0} cy={0} size={18} />
                         </svg>
                         <span className="flex-1 text-xs text-gray-300 truncate">
                           {def.label}

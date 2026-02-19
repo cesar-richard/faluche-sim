@@ -4,12 +4,11 @@ export interface InsigneDef {
   id: string;
   label: string;
   category: InsigneCategory;
-  hasRetourne?: boolean;
-  defaultRetourne?: boolean;     // placed retourné by default (e.g. cochon_integre)
+  defaultRetourne?: boolean;     // placed retourné (upside-down) by default
   labelEndroit?: string;
-  labelEnvers?: string;
   hasAnnee?: boolean;
   hasNombreCousu?: boolean;      // ciseaux: nombre de faluches cousues (exposant)
+  svgId?: string;                // maps to a different SVG component (e.g. both cochon entries → 'cochon')
 }
 
 export const CATEGORY_LABELS: Record<InsigneCategory, string> = {
@@ -22,10 +21,12 @@ export const CATEGORY_LABELS: Record<InsigneCategory, string> = {
 
 export const INSIGNES_CATALOG: InsigneDef[] = [
   // --- Obligatoires Amiens ---
-  { id: 'chameau', label: 'Chameau', category: 'obligatoire_amiens', hasRetourne: true, labelEndroit: 'Célibataire', labelEnvers: 'En couple' },
-  { id: 'cochon_integre', label: 'Cochon ↓ (a été intégré·e)', category: 'obligatoire_amiens', defaultRetourne: true, labelEndroit: 'A été intégré(e)' },
-  { id: 'cochon_integrateur', label: 'Cochon ↑ (a intégré)', category: 'obligatoire_amiens', labelEndroit: 'A intégré quelqu\'un' },
-  { id: 'squelette', label: 'Squelette', category: 'obligatoire_amiens', hasRetourne: true, labelEndroit: 'Amour de l\'anatomie', labelEnvers: 'Anatomie sexe opposé' },
+  { id: 'chameau_celibataire', label: 'Chameau ↑ (célibataire)', category: 'obligatoire_amiens', svgId: 'chameau', labelEndroit: 'Célibataire' },
+  { id: 'chameau_couple', label: 'Chameau ↓ (en couple)', category: 'obligatoire_amiens', svgId: 'chameau', defaultRetourne: true, labelEndroit: 'En couple' },
+  { id: 'cochon_integre', label: 'Cochon ↓ (a été intégré·e)', category: 'obligatoire_amiens', svgId: 'cochon', defaultRetourne: true, labelEndroit: 'A été intégré(e)' },
+  { id: 'cochon_integrateur', label: 'Cochon ↑ (a intégré)', category: 'obligatoire_amiens', svgId: 'cochon', labelEndroit: 'A intégré quelqu\'un' },
+  { id: 'squelette_endroit', label: 'Squelette ↑ (anatomie)', category: 'obligatoire_amiens', svgId: 'squelette', labelEndroit: 'Amour de l\'anatomie' },
+  { id: 'squelette_retourne', label: 'Squelette ↓ (sexe opposé)', category: 'obligatoire_amiens', svgId: 'squelette', defaultRetourne: true, labelEndroit: 'Anatomie sexe opposé' },
   { id: 'ciseaux', label: 'Ciseaux', category: 'obligatoire_amiens', hasAnnee: true, hasNombreCousu: true, labelEndroit: 'A cousu sa faluche (année + nb cousues)' },
 
   // --- Auto-attribués ---
@@ -50,7 +51,8 @@ export const INSIGNES_CATALOG: InsigneDef[] = [
   { id: 'fourchettes_croisees', label: 'Fourchettes croisées', category: 'auto', labelEndroit: 'Mange comme un porc' },
   { id: 'fraise', label: 'Fraise', category: 'auto', labelEndroit: 'Femme enceinte' },
   { id: 'globe_vert', label: 'Globe sur ruban vert', category: 'auto', labelEndroit: 'Engagement écologique' },
-  { id: 'grappe_raisin', label: 'Grappe de raisin', category: 'auto', hasRetourne: true, labelEndroit: 'Amour du bon vin', labelEnvers: 'Amour de tous les alcools' },
+  { id: 'grappe_raisin', label: 'Grappe de raisin ↑ (bon vin)', category: 'auto', labelEndroit: 'Amour du bon vin' },
+  { id: 'grappe_raisin_retourne', label: 'Grappe de raisin ↓ (tous alcools)', category: 'auto', svgId: 'grappe_raisin', defaultRetourne: true, labelEndroit: 'Amour de tous les alcools' },
   { id: 'lacet_cuir', label: 'Lacet de cuir', category: 'auto', labelEndroit: 'Sado-maso' },
   { id: 'lyre', label: 'Lyre', category: 'auto', labelEndroit: 'Amour des arts musicaux' },
   { id: 'marteau_maillet', label: 'Marteau et maillet', category: 'auto', labelEndroit: 'Bricoleur' },

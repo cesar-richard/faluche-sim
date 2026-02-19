@@ -86,6 +86,7 @@ export function Velours({ cx, cy, radius, insignes, selectedId, onSelect, onMove
           >
             <InsignePersonnel
               id={insigne.id}
+              svgId={insigne.svgId}
               retourne={insigne.retourne}
               cx={ix}
               cy={iy}

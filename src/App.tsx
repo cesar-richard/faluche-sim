@@ -60,10 +60,18 @@ function App() {
     // Guard for old JSON files without insignes
     if (loaded.velours) {
       loaded.velours.insignes = loaded.velours.insignes ?? [];
-      // Migrate old single "cochon" to new split ids
+      // Migrate old single-entry retournable insignes to new split ids
+      const MIGRATIONS: Record<string, { endroit: { id: string; label: string }; retourne: { id: string; label: string; svgId: string } }> = {
+        cochon: { endroit: { id: 'cochon_integrateur', label: 'Cochon ↑ (a intégré)' }, retourne: { id: 'cochon_integre', label: 'Cochon ↓ (a été intégré·e)', svgId: 'cochon' } },
+        chameau: { endroit: { id: 'chameau_celibataire', label: 'Chameau ↑ (célibataire)' }, retourne: { id: 'chameau_couple', label: 'Chameau ↓ (en couple)', svgId: 'chameau' } },
+        squelette: { endroit: { id: 'squelette_endroit', label: 'Squelette ↑ (anatomie)' }, retourne: { id: 'squelette_retourne', label: 'Squelette ↓ (sexe opposé)', svgId: 'squelette' } },
+        grappe_raisin: { endroit: { id: 'grappe_raisin', label: 'Grappe de raisin ↑ (bon vin)' }, retourne: { id: 'grappe_raisin_retourne', label: 'Grappe de raisin ↓ (tous alcools)', svgId: 'grappe_raisin' } },
+      };
       loaded.velours.insignes = loaded.velours.insignes.map((ins) => {
-        if (ins.id === 'cochon') {
-          return { ...ins, id: ins.retourne ? 'cochon_integre' : 'cochon_integrateur', label: ins.retourne ? 'Cochon ↓ (a été intégré·e)' : 'Cochon ↑ (a intégré)' };
+        const migration = MIGRATIONS[ins.id];
+        if (migration) {
+          const target = ins.retourne ? migration.retourne : migration.endroit;
+          return { ...ins, ...target };
         }
         return ins;
       });
