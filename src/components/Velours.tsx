@@ -97,7 +97,7 @@ export function Velours({ cx, cy, radius, insignes, selectedId, onSelect, onMove
             {isSelected && (
               <circle
                 cx={ix} cy={iy} r={INSIGNE_SIZE * 0.65}
-                fill="none" stroke="#60A5FA" strokeWidth={1.5} strokeDasharray="4 3"
+                fill="none" stroke="#D4A843" strokeWidth={1.5} strokeDasharray="4 3"
               />
             )}
           </g>

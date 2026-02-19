@@ -63,8 +63,8 @@ export function InsignesEditor({ insignes, onChange, selectedId, onSelect }: Ins
   }
 
   return (
-    <div className="rounded-lg border border-gray-700 bg-gray-800 p-4 text-sm">
-      <h3 className="mb-3 text-base font-semibold text-gray-200">Insignes personnels</h3>
+    <div className="text-sm">
+      <h3 className="mb-3 font-display text-sm font-semibold text-accent">Insignes personnels</h3>
 
       {/* Active insignes */}
       {insignes.length > 0 && (
@@ -76,7 +76,7 @@ export function InsignesEditor({ insignes, onChange, selectedId, onSelect }: Ins
             return (
               <div
                 key={insigne.id}
-                className={`flex items-center gap-2 rounded p-1.5 ${isSelected ? 'bg-blue-900/40 ring-1 ring-blue-500' : 'bg-gray-700/50'}`}
+                className={`flex items-center gap-2 rounded p-1.5 ${isSelected ? 'bg-accent/10 ring-1 ring-accent' : 'bg-gray-900/50'}`}
                 onClick={() => onSelect(insigne.id)}
               >
                 <svg width={24} height={24} viewBox="-14 -14 28 28">
@@ -129,7 +129,7 @@ export function InsignesEditor({ insignes, onChange, selectedId, onSelect }: Ins
           return (
             <div key={cat}>
               <button
-                className="flex w-full items-center justify-between rounded px-2 py-1 text-left text-xs font-semibold text-gray-300 hover:bg-gray-700"
+                className="flex w-full items-center justify-between rounded px-2 py-1 text-left text-xs font-semibold text-gray-300 hover:bg-gray-800"
                 onClick={() => setOpenCategory(isOpen ? null : cat)}
               >
                 <span>{CATEGORY_LABELS[cat]} ({items.length})</span>
@@ -142,7 +142,7 @@ export function InsignesEditor({ insignes, onChange, selectedId, onSelect }: Ins
                     return (
                       <div
                         key={def.id}
-                        className={`flex items-center gap-2 rounded px-2 py-1 ${isActive ? 'opacity-40' : 'hover:bg-gray-700 cursor-pointer'}`}
+                        className={`flex items-center gap-2 rounded px-2 py-1 ${isActive ? 'opacity-40' : 'hover:bg-gray-800 cursor-pointer'}`}
                         onClick={() => !isActive && addInsigne(def)}
                       >
                         <svg width={20} height={20} viewBox="-12 -12 24 24">
@@ -156,7 +156,7 @@ export function InsignesEditor({ insignes, onChange, selectedId, onSelect }: Ins
                         </span>
                         {isActive
                           ? <span className="text-green-500 text-xs">✓</span>
-                          : <span className="text-blue-400 text-xs font-bold">+</span>
+                          : <span className="text-accent text-xs font-bold">+</span>
                         }
                       </div>
                     );

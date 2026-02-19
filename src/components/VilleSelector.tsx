@@ -39,14 +39,14 @@ export function VilleSelector({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <label htmlFor="ville-etude" className="text-sm font-semibold text-gray-300">
+        <label htmlFor="ville-etude" className="text-xs font-medium text-gray-400">
           Ville d'étude
         </label>
         <select
           id="ville-etude"
           value={villeEtude}
           onChange={handleVilleEtudeChange}
-          className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-white"
+          className="rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 text-white focus:ring-1 focus:ring-accent focus:outline-none"
         >
           {VILLES.map((v) => (
             <option key={v.nom} value={v.nom}>{v.nom}</option>
@@ -55,14 +55,14 @@ export function VilleSelector({
       </div>
 
       <div className="flex flex-col gap-2">
-        <label htmlFor="ville-naissance" className="text-sm font-semibold text-gray-300">
+        <label htmlFor="ville-naissance" className="text-xs font-medium text-gray-400">
           Ville de naissance
         </label>
         <select
           id="ville-naissance"
           value={villeNaissance}
           onChange={handleVilleChange}
-          className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-white"
+          className="rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 text-white focus:ring-1 focus:ring-accent focus:outline-none"
         >
           <option value="">-- Choisir --</option>
           {VILLES.map((v) => (
@@ -72,14 +72,14 @@ export function VilleSelector({
       </div>
 
       <div className="flex flex-col gap-2">
-        <label htmlFor="province-naissance" className="text-sm font-semibold text-gray-300">
+        <label htmlFor="province-naissance" className="text-xs font-medium text-gray-400">
           Province de naissance
         </label>
         <select
           id="province-naissance"
           value={provinceNaissance}
           onChange={handleProvinceChange}
-          className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-white"
+          className="rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 text-white focus:ring-1 focus:ring-accent focus:outline-none"
         >
           <option value="">-- Choisir --</option>
           {PROVINCES.map((p) => (

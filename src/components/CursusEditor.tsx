@@ -84,7 +84,7 @@ export function CursusEditor({ circulaire, onChange }: CursusEditorProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <h3 className="text-sm font-semibold text-gray-300">Circulaire — Cursus</h3>
+      <h3 className="font-display text-sm font-semibold text-accent">Circulaire — Cursus</h3>
 
       {/* Surnom + Initiales */}
       <div className="flex gap-3">
@@ -96,7 +96,7 @@ export function CursusEditor({ circulaire, onChange }: CursusEditorProps) {
             value={surnom}
             onChange={(e) => update({ surnom: e.target.value })}
             placeholder="Ton surnom de baptême"
-            className="rounded border border-gray-600 bg-gray-800 px-3 py-1.5 text-sm text-white"
+            className="rounded border border-gray-700 bg-gray-900 px-3 py-1.5 text-sm text-white focus:ring-1 focus:ring-accent focus:outline-none"
           />
         </div>
         <div className="flex flex-col gap-1">
@@ -107,7 +107,7 @@ export function CursusEditor({ circulaire, onChange }: CursusEditorProps) {
             value={circulaire.initiales}
             onChange={(e) => update({ initiales: e.target.value })}
             placeholder="C.D."
-            className="rounded border border-gray-600 bg-gray-800 px-3 py-1.5 text-sm text-white w-20"
+            className="rounded border border-gray-700 bg-gray-900 px-3 py-1.5 text-sm text-white focus:ring-1 focus:ring-accent focus:outline-none w-20"
           />
         </div>
       </div>
@@ -123,7 +123,7 @@ export function CursusEditor({ circulaire, onChange }: CursusEditorProps) {
             onChange={(e) => update({ anneeBac: parseInt(e.target.value) || 0 })}
             min={1990}
             max={2030}
-            className="rounded border border-gray-600 bg-gray-800 px-3 py-1.5 text-sm text-white w-24"
+            className="rounded border border-gray-700 bg-gray-900 px-3 py-1.5 text-sm text-white focus:ring-1 focus:ring-accent focus:outline-none w-24"
           />
         </div>
         <div className="flex flex-col gap-1">
@@ -132,7 +132,7 @@ export function CursusEditor({ circulaire, onChange }: CursusEditorProps) {
             id="typeBac"
             value={circulaire.typeBac ?? 'general'}
             onChange={(e) => update({ typeBac: e.target.value as TypeBac })}
-            className="rounded border border-gray-600 bg-gray-700 px-2 py-1.5 text-xs text-white"
+            className="rounded border border-gray-700 bg-gray-900 px-2 py-1.5 text-xs text-white"
           >
             {TYPE_BAC_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>
@@ -194,7 +194,7 @@ export function CursusEditor({ circulaire, onChange }: CursusEditorProps) {
 
         <button
           onClick={addSegment}
-          className="rounded-lg border border-dashed border-gray-600 py-2 text-xs text-gray-400 hover:border-gray-400 hover:text-gray-300"
+          className="rounded-lg border border-dashed border-accent-dim py-2 text-xs text-gray-400 hover:border-accent hover:text-accent transition-colors"
         >
           + Ajouter un segment
         </button>
@@ -248,7 +248,7 @@ function SegmentEditor({ seg, index, isBapteme, isFirst, isLast, segmentCount, o
   return (
     <div
       className={`flex flex-col gap-2 rounded-lg border p-3 ${
-        isBapteme ? 'border-yellow-500 bg-gray-800' : 'border-gray-700 bg-gray-800/50'
+        isBapteme ? 'border-accent bg-gray-900' : 'border-gray-800 bg-gray-900/50'
       }`}
     >
       {/* Filière selector */}
@@ -260,7 +260,7 @@ function SegmentEditor({ seg, index, isBapteme, isFirst, isLast, segmentCount, o
         <select
           value={seg.filiere}
           onChange={(e) => onFiliereChange(e.target.value)}
-          className="flex-1 rounded border border-gray-600 bg-gray-700 px-2 py-1 text-xs text-white"
+          className="flex-1 rounded border border-gray-700 bg-gray-900 px-2 py-1 text-xs text-white"
         >
           <optgroup label="Santé (velours)">
             {veloursGroup.map((f) => (
@@ -282,7 +282,7 @@ function SegmentEditor({ seg, index, isBapteme, isFirst, isLast, segmentCount, o
           <select
             value={seg.label ?? ''}
             onChange={(e) => onSegmentUpdate({ label: e.target.value || undefined })}
-            className="w-20 rounded border border-gray-600 bg-gray-700 px-1 py-0.5 text-xs text-white"
+            className="w-20 rounded border border-gray-700 bg-gray-900 px-1 py-0.5 text-xs text-white"
           >
             <option value="">—</option>
             <option value="DUT">DUT</option>
@@ -301,7 +301,7 @@ function SegmentEditor({ seg, index, isBapteme, isFirst, isLast, segmentCount, o
             onChange={(e) => onAnneesChange(Math.max(1, parseInt(e.target.value) || 1))}
             min={1}
             max={10}
-            className="w-14 rounded border border-gray-600 bg-gray-700 px-2 py-0.5 text-center text-xs text-white"
+            className="w-14 rounded border border-gray-700 bg-gray-900 px-2 py-0.5 text-center text-xs text-white"
           />
         </label>
 
@@ -389,7 +389,7 @@ function SegmentEditor({ seg, index, isBapteme, isFirst, isLast, segmentCount, o
                   <select
                     value={ann.etranger ?? ''}
                     onChange={(e) => onAnnotationUpdate(yi, { etranger: e.target.value || undefined })}
-                    className="rounded border border-gray-600 bg-gray-700 px-1 py-0 text-xs text-white"
+                    className="rounded border border-gray-700 bg-gray-900 px-1 py-0 text-xs text-white"
                   >
                     <option value="">Pays</option>
                     {PAYS.map((p) => (

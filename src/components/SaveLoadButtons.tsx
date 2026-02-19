@@ -1,11 +1,25 @@
+import { useState } from 'react';
 import type { Faluche } from '../data/types';
 
 interface SaveLoadButtonsProps {
   faluche: Faluche;
   onLoad: (faluche: Faluche) => void;
+  onShare: () => Promise<void>;
 }
 
-export function SaveLoadButtons({ faluche, onLoad }: SaveLoadButtonsProps) {
+export function SaveLoadButtons({ faluche, onLoad, onShare }: SaveLoadButtonsProps) {
+  const [shareStatus, setShareStatus] = useState<'idle' | 'copied' | 'error'>('idle');
+
+  async function handleShare() {
+    try {
+      await onShare();
+      setShareStatus('copied');
+      setTimeout(() => setShareStatus('idle'), 2000);
+    } catch {
+      setShareStatus('error');
+      setTimeout(() => setShareStatus('idle'), 2000);
+    }
+  }
   function handleSave() {
     const json = JSON.stringify(faluche, null, 2);
     const blob = new Blob([json], { type: 'application/json' });
@@ -39,18 +53,33 @@ export function SaveLoadButtons({ faluche, onLoad }: SaveLoadButtonsProps) {
   }
 
   return (
-    <div className="flex gap-3">
+    <div className="flex flex-col gap-3">
+      <div className="flex gap-3">
+        <button
+          onClick={handleSave}
+          className="flex-1 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-gray-950 hover:bg-accent-hover transition-colors"
+        >
+          Sauvegarder JSON
+        </button>
+        <button
+          onClick={handleLoad}
+          className="flex-1 rounded-lg border border-gray-700 bg-gray-900 px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-800 transition-colors"
+        >
+          Charger JSON
+        </button>
+      </div>
       <button
-        onClick={handleSave}
-        className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+        onClick={handleShare}
+        className="rounded-lg border border-accent/40 bg-gray-900 px-4 py-2 text-sm font-medium text-accent hover:border-accent hover:bg-gray-800 transition-colors"
       >
-        Sauvegarder JSON
+        {shareStatus === 'copied' ? 'Lien copié !' : shareStatus === 'error' ? 'Erreur' : 'Copier le lien de partage'}
       </button>
       <button
-        onClick={handleLoad}
-        className="rounded-lg bg-gray-600 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700"
+        disabled
+        className="rounded-lg border border-gray-800 px-4 py-2 text-sm text-gray-600 cursor-not-allowed"
+        title="Bientôt disponible"
       >
-        Charger JSON
+        Exporter PNG (bientôt)
       </button>
     </div>
   );

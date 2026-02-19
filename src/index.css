@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+@theme {
+  --color-accent: #D4A843;
+  --color-accent-hover: #C49A3A;
+  --color-accent-dim: #D4A84366;
+  --font-family-display: Georgia, 'Times New Roman', serif;
+}
