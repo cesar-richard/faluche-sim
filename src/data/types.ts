@@ -81,70 +81,25 @@ export interface Insigne {
 
 export function createDefaultFaluche(): Faluche {
   return {
-    "proprietaire": "Cesar Richard",
-    "ville": "amiens",
-    "dateCreation": "2026-02-19T08:21:20.480Z",
-    "circulaire": {
-      "segments": [
-        {
-          "filiere": "Sciences",
-          "couleur": "#EC4899",
-          "matiere": "satin",
-          "annees": 2,
-          "label": "DUT",
-          "diplome": true
-        },
-        {
-          "filiere": "Écoles d'ingénieurs",
-          "couleur": "#4169E1",
-          "matiere": "satin",
-          "annees": 3,
-          "diplome": true,
-          "annotations": {
-            "0": {
-              "alternance": true,
-              "etranger": "🇦🇺"
-            },
-            "1": {
-              "alternance": true
-            },
-            "2": {
-              "alternance": true
-            }
-          }
-        }
-      ],
-      "baptemeIndex": 1,
-      "initiales": "CR",
-      "surnom": "",
-      "anneeBac": 2010,
-      "typeBac": "S",
-      "moivre": "public"
+    proprietaire: '',
+    ville: 'amiens',
+    dateCreation: new Date().toISOString(),
+    circulaire: {
+      segments: [],
+      baptemeIndex: 0,
+      initiales: '',
+      surnom: '',
+      anneeBac: new Date().getFullYear(),
+      typeBac: 'general',
+      moivre: 'public',
     },
-    "villeEtude": {
-      "nom": "Compiègne",
-      "couleurs": [
-        "#FFD700",
-        "#4169E1"
-      ]
+    villeEtude: {
+      nom: '',
+      couleurs: ['#000000', '#000000'],
     },
-    "villeNaissance": {
-      "nom": "Beauvais",
-      "couleurs": [
-        "#CC0000",
-        "#FFFFFF"
-      ]
+    velours: {
+      rubans: [],
+      insignes: [],
     },
-    "provinceNaissance": {
-      "nom": "Picardie",
-      "couleurs": [
-        "#4169E1",
-        "#FFFFFF"
-      ]
-    },
-    "velours": {
-      "rubans": [],
-      "insignes": []
-    }
   };
 }
