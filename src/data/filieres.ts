@@ -32,7 +32,7 @@ export const FILIERES: Filiere[] = [
   { nom: 'Lettres / Langues / SHS', couleur: '#FFD700', matiere: 'satin', label: 'Satin jaune', embleme: '✎' },
   { nom: 'Musique / Musicologie', couleur: '#C0C0C0', matiere: 'satin', label: 'Satin argenté', embleme: '♪' },
   { nom: 'Oenologie', couleur: '#FA8072', matiere: 'satin', label: 'Satin saumon', embleme: '🍷' },
-  { nom: 'Sciences', couleur: '#7B2D8E', matiere: 'satin', label: 'Satin violet', embleme: '⚛' },
+  { nom: 'Sciences', couleur: '#EC4899', matiere: 'satin', label: 'Satin rose', embleme: '⚛' },
   { nom: 'Sciences économiques / Gestion / IAE', couleur: '#FF8C00', matiere: 'satin', label: 'Satin orange', embleme: '📊' },
   { nom: 'Sciences politiques', couleur: '#4169E1', matiere: 'satin', label: 'Satin bleu & rouge', embleme: '🏛' },
 ];

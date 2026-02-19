@@ -1,5 +1,9 @@
 import type { Circulaire, CursusSegment, AnneeAnnotation, TypeBac } from '../data/types';
-import { BICOLORES, FILIERES } from '../data/filieres';
+import { BICOLORES } from '../data/filieres';
+import {
+  StarInsigne, WreathInsigne, PalmeInsigne, SkullInsigne,
+  CowInsigne, BeeInsigne, QuilleInsigne, FiliereEmbleme,
+} from './Insignes';
 
 interface CirculaireBarProps {
   x: number;
@@ -11,9 +15,9 @@ interface CirculaireBarProps {
 
 // Layout constants (as fractions of total width)
 const OEILLET_ZONE = 0.06;
-const SURNOM_ZONE = 0.18;
-const BAC_ZONE = 0.10;    // slightly wider to fit typeBac
-const EMBLEME_ZONE = 0.06;
+const SURNOM_ZONE = 0.20;
+const INITIALES_ZONE = 0.06;
+const BAC_ZONE = 0.10;
 
 function isLightColor(hex: string): boolean {
   const c = hex.replace('#', '');
@@ -25,10 +29,6 @@ function isLightColor(hex: string): boolean {
 
 function getTextColor(bg: string): string {
   return isLightColor(bg) ? '#333' : '#fff';
-}
-
-function getEmbleme(filiere: string): string {
-  return FILIERES.find(f => f.nom === filiere)?.embleme ?? '●';
 }
 
 function getTypeBacStr(typeBac: TypeBac): string {
@@ -60,7 +60,7 @@ function SegmentRect({ x, y, w, h, filiere, couleur }: {
   return <rect x={x} y={y} width={w} height={h} fill={couleur} />;
 }
 
-// Build a flat list of "slots" for rendering: each year and each inter-segment marker
+// Build a flat list of "slots" for rendering
 interface YearSlot {
   kind: 'year';
   segIndex: number;
@@ -76,31 +76,43 @@ interface MarkerSlot {
   segIndex: number;
 }
 
+interface LabelSlot {
+  kind: 'label';
+  text: string;
+  segIndex: number;
+  seg: CursusSegment;
+}
+
+interface EmblemeSlot {
+  kind: 'embleme';
+  segIndex: number;
+  filiere: string;
+}
+
 interface EndSlot {
   kind: 'end';
   type: 'quille' | 'abeille';
 }
 
-type Slot = YearSlot | MarkerSlot | EndSlot;
+type Slot = YearSlot | LabelSlot | MarkerSlot | EmblemeSlot | EndSlot;
 
 function buildSlots(circulaire: Circulaire): Slot[] {
   const slots: Slot[] = [];
   let isFirst = true;
   for (let si = 0; si < circulaire.segments.length; si++) {
     const seg = circulaire.segments[si];
+    // Insert emblème slot at the start of the baptême segment
+    if (si === circulaire.baptemeIndex) {
+      slots.push({ kind: 'embleme', segIndex: si, filiere: seg.filiere });
+    }
+    if (seg.label) {
+      slots.push({ kind: 'label', text: seg.label, segIndex: si, seg });
+    }
     for (let yi = 0; yi < seg.annees; yi++) {
       const annotation = seg.annotations?.[yi] ?? {};
-      slots.push({
-        kind: 'year',
-        segIndex: si,
-        yearIndex: yi,
-        seg,
-        annotation,
-        isFirstYearOverall: isFirst,
-      });
+      slots.push({ kind: 'year', segIndex: si, yearIndex: yi, seg, annotation, isFirstYearOverall: isFirst });
       isFirst = false;
     }
-    // Inter-segment markers
     if (seg.diplome) slots.push({ kind: 'marker', type: 'diplome', segIndex: si });
     if (seg.palmeCycle) slots.push({ kind: 'marker', type: 'palmeCycle', segIndex: si });
     if (seg.abandon) slots.push({ kind: 'marker', type: 'abandon', segIndex: si });
@@ -110,57 +122,76 @@ function buildSlots(circulaire: Circulaire): Slot[] {
   return slots;
 }
 
-// Width weight for each slot type
 function slotWeight(slot: Slot): number {
-  if (slot.kind === 'year') return slot.annotation.annexe ? 0.6 : 1;
-  if (slot.kind === 'marker') return 0.5;
-  return 0.5; // end slots
+  if (slot.kind === 'year') return slot.annotation.annexe ? 0.4 : 0.8;
+  if (slot.kind === 'label') return 0.8;
+  if (slot.kind === 'marker') return 0.8;
+  if (slot.kind === 'embleme') return 1.2;
+  return 0.5;
 }
 
 export function CirculaireBar({ x, y, width, height, circulaire }: CirculaireBarProps) {
-  const { segments, baptemeIndex, surnom, anneeBac, typeBac, moivre } = circulaire;
+  const { segments, baptemeIndex, initiales, surnom, anneeBac, typeBac, moivre } = circulaire;
   const bapteme = segments[baptemeIndex] ?? segments[0];
   if (!bapteme) {
     return <rect x={x} y={y} width={width} height={height} fill="#333" stroke="#555" strokeWidth={2} rx={4} />;
   }
 
   const baptemeColor = bapteme.couleur;
-  const textColor = getTextColor(baptemeColor);
 
-  // Reserved zones
   const oeilletW = width * OEILLET_ZONE;
-  const surnomW = width * SURNOM_ZONE;
+  const surnomW = surnom ? width * SURNOM_ZONE : 0;
+  const initialesW = initiales ? width * INITIALES_ZONE : 0;
   const bacW = width * BAC_ZONE;
-  const emblemeW = width * EMBLEME_ZONE;
-  const reservedW = oeilletW + surnomW + bacW + emblemeW;
+  const reservedW = oeilletW + surnomW + initialesW + bacW;
   const cursusW = width - reservedW;
-  const frontalX = x + reservedW;
+  const cursusStartX = x + reservedW;
 
-  // Build segment background rects for the cursus area
-  const totalYears = segments.reduce((sum, s) => sum + s.annees, 0);
-  const segmentRects: { seg: CursusSegment; sx: number; sw: number }[] = [];
-  let curX = frontalX;
-  for (const seg of segments) {
-    const sw = totalYears > 0 ? (seg.annees / totalYears) * cursusW : 0;
-    segmentRects.push({ seg, sx: curX, sw });
-    curX += sw;
-  }
-
-  // Build slots and compute per-slot positions in cursusW
+  // Build slots with compact sizing
   const slots = buildSlots(circulaire);
   const totalWeight = slots.reduce((s, sl) => s + slotWeight(sl), 0);
+  const compactW = totalWeight * height * 0.7;
+  const effectiveCursusW = Math.min(cursusW, Math.max(compactW, cursusW * 0.5));
+  const cursusOffset = (cursusW - effectiveCursusW) / 2;
 
   const slotPositions: { slot: Slot; cx: number; w: number }[] = [];
-  let slotX = frontalX;
+  let slotX = cursusStartX + cursusOffset;
+  let frontalX = cursusStartX;
+  let foundFrontal = false;
+
   for (const slot of slots) {
-    const w = totalWeight > 0 ? (slotWeight(slot) / totalWeight) * cursusW : 0;
+    const w = totalWeight > 0 ? (slotWeight(slot) / totalWeight) * effectiveCursusW : 0;
+    // Frontal = left edge of the first slot belonging to the baptême segment
+    if (!foundFrontal && 'segIndex' in slot && slot.segIndex === baptemeIndex) {
+      frontalX = slotX;
+      foundFrontal = true;
+    }
     slotPositions.push({ slot, cx: slotX + w / 2, w });
     slotX += w;
   }
 
+  // Derive segment background rectangles from their slot positions
+  const segmentRects: { seg: CursusSegment; sx: number; sw: number }[] = [];
+  for (let si = 0; si < segments.length; si++) {
+    const segSlots = slotPositions.filter(({ slot }) => 'segIndex' in slot && slot.segIndex === si);
+    if (segSlots.length === 0) {
+      segmentRects.push({ seg: segments[si], sx: cursusStartX, sw: 0 });
+      continue;
+    }
+    const first = segSlots[0];
+    const last = segSlots[segSlots.length - 1];
+    const sx = first.cx - first.w / 2;
+    const ex = last.cx + last.w / 2;
+    segmentRects.push({ seg: segments[si], sx, sw: ex - sx });
+  }
+
   const cy = y + height / 2;
-  const bacStr = `É${String(anneeBac % 100).padStart(2, '0')}`;
+  const bacStr = `${String(anneeBac % 100).padStart(2, '0')}`;
   const typeBacStr = getTypeBacStr(typeBac ?? 'general');
+  // X positions for each zone
+  const surnomX = x + oeilletW + surnomW / 2;
+  const initialesX = x + oeilletW + surnomW + initialesW / 2;
+  const bacX = x + oeilletW + surnomW + initialesW + bacW / 2;
 
   return (
     <g>
@@ -171,283 +202,182 @@ export function CirculaireBar({ x, y, width, height, circulaire }: CirculaireBar
       </defs>
 
       <g clipPath="url(#clip-circulaire)">
-        {/* Background = baptême color */}
         <SegmentRect x={x} y={y} w={width} h={height} filiere={bapteme.filiere} couleur={baptemeColor} />
 
-        {/* Cursus segment backgrounds */}
         {segmentRects.map(({ seg, sx, sw }, i) => {
           if (i === baptemeIndex) return null;
-          return (
-            <SegmentRect key={i} x={sx} y={y} w={sw} h={height} filiere={seg.filiere} couleur={seg.couleur} />
-          );
+          return <SegmentRect key={i} x={sx} y={y} w={sw} h={height} filiere={seg.filiere} couleur={seg.couleur} />;
         })}
 
-        {/* Segment separators */}
         {segmentRects.map(({ sx }, i) => {
           if (i === 0) return null;
-          return (
-            <line key={`sep-${i}`} x1={sx} y1={y} x2={sx} y2={y + height} stroke="#00000044" strokeWidth={1} />
-          );
+          return <line key={`sep-${i}`} x1={sx} y1={y} x2={sx} y2={y + height} stroke="#00000044" strokeWidth={1} />;
         })}
 
-        {/* Render each slot */}
         {slotPositions.map(({ slot, cx: scx, w: sw }, i) => {
+          if (slot.kind === 'label') {
+            return <LabelRender key={`l-${i}`} text={slot.text} cx={scx} cy={cy} h={height} />;
+          }
           if (slot.kind === 'year') {
-            return (
-              <YearRender
-                key={`y-${i}`}
-                slot={slot}
-                cx={scx}
-                cy={cy}
-                w={sw}
-                h={height}
-                moivre={moivre}
-              />
-            );
+            return <YearRender key={`y-${i}`} slot={slot} cx={scx} cy={cy} w={sw} h={height} barY={y} moivre={moivre} />;
           }
           if (slot.kind === 'marker') {
-            return <MarkerRender key={`m-${i}`} type={slot.type} cx={scx} cy={cy} h={height} segColor={segments[slot.segIndex].couleur} />;
+            return <MarkerRender key={`m-${i}`} type={slot.type} cx={scx} cy={cy} h={height} />;
           }
-          // end slot
-          return <EndRender key={`e-${i}`} type={slot.type} cx={scx} cy={cy} h={height} baptemeColor={baptemeColor} />;
+          if (slot.kind === 'embleme') {
+            return <FiliereEmbleme key={`emb-${i}`} filiere={slot.filiere} cx={scx} cy={cy} size={height * 0.55} color="#FFD700" stroke="#B8860B" />;
+          }
+          return <EndRender key={`e-${i}`} type={slot.type} cx={scx} cy={cy} h={height} />;
         })}
       </g>
 
       {/* Oeillet */}
       <circle cx={x + oeilletW / 2} cy={cy} r={height * 0.28} fill="#FFD700" stroke="#B8860B" strokeWidth={1.5} />
-      <circle cx={x + oeilletW / 2} cy={cy} r={height * 0.12} fill="none" stroke="#B8860B" strokeWidth={1} />
+      <circle cx={x + oeilletW / 2} cy={cy} r={height * 0.12} fill="#111827" stroke="#B8860B" strokeWidth={1} />
 
       {/* Surnom */}
       {surnom && (
-        <text
-          x={x + oeilletW + surnomW / 2} y={cy + 5}
-          textAnchor="middle" fill={textColor}
-          fontSize={13} fontWeight="bold" fontStyle="italic"
-        >
+        <text x={surnomX} y={cy + height * 0.08} textAnchor="middle" fill="#FFD700" stroke="#B8860B" strokeWidth={0.3} fontSize={Math.round(height * 0.28)} fontWeight="bold" fontStyle="italic">
           {surnom}
         </text>
       )}
 
-      {/* Année du bac + type */}
-      <text
-        x={x + oeilletW + surnomW + bacW / 2} y={cy + 5}
-        textAnchor="middle" fill={textColor}
-        fontSize={11} fontWeight="bold" fontFamily="serif"
-      >
-        {typeBacStr}{bacStr}
-      </text>
+      {/* Initiales */}
+      {initiales && (
+        <text x={initialesX} y={cy + height * 0.08} textAnchor="middle" fill="#FFD700" stroke="#B8860B" strokeWidth={0.3} fontSize={Math.round(height * 0.28)} fontWeight="bold" fontFamily="serif">
+          {initiales}
+        </text>
+      )}
 
-      {/* Emblème de baptême (at frontal) */}
-      <text
-        x={x + oeilletW + surnomW + bacW + emblemeW / 2} y={cy + 6}
-        textAnchor="middle" fill={textColor} fontSize={16}
-      >
-        {getEmbleme(bapteme.filiere)}
+      {/* Année du bac + type */}
+      <text x={bacX} y={cy + height * 0.08} textAnchor="middle" fill="#FFD700" stroke="#B8860B" strokeWidth={0.5} fontSize={Math.round(height * 0.28)} fontWeight="bold" fontFamily="serif">
+        {typeBacStr}{bacStr}
       </text>
 
       {/* Outer stroke */}
       <rect x={x} y={y} width={width} height={height} fill="none" stroke="#333" strokeWidth={2} rx={4} />
 
       {/* Frontal marker */}
-      <line
-        x1={frontalX} y1={y - 8} x2={frontalX} y2={y + height + 8}
-        stroke="#888" strokeWidth={1} strokeDasharray="4 3"
-      />
-      <text x={frontalX} y={y + height + 20} textAnchor="middle" fill="#666" fontSize={10}>
-        Frontal
-      </text>
+      <line x1={frontalX} y1={y - 8} x2={frontalX} y2={y + height + 8} stroke="#888" strokeWidth={1} strokeDasharray="4 3" />
+      <text x={frontalX} y={y + height + 20} textAnchor="middle" fill="#666" fontSize={10}>Frontal</text>
     </g>
   );
 }
 
 // --- Sub-components for slot rendering ---
 
-function YearRender({ slot, cx, cy, w, h, moivre }: {
-  slot: YearSlot; cx: number; cy: number; w: number; h: number; moivre: 'public' | 'prive';
+function YearRender({ slot, cx, cy, w, h, barY, moivre }: {
+  slot: YearSlot; cx: number; cy: number; w: number; h: number; barY: number; moivre: 'public' | 'prive';
 }) {
   const { annotation, isFirstYearOverall, seg } = slot;
-  const segTextColor = getTextColor(seg.couleur);
   const isAnnexe = annotation.annexe;
-  const baseFontSize = isAnnexe ? 9 : 13;
-  const fontSize = Math.min(baseFontSize, w * 0.9);
+  const baseStarSize = isAnnexe ? h * 0.12 : h * 0.18;
+  const starSize = Math.min(baseStarSize, w * 0.45);
 
-  // What to show as the main symbol
-  let mainSymbol: string;
-  let mainColor = segTextColor;
-  if (annotation.cesure) {
-    mainSymbol = '0';
-  } else if (annotation.equivalence) {
-    mainSymbol = 'e';
-  } else {
-    mainSymbol = '★';
-    if (annotation.redoublement) {
-      mainColor = '#C0C0C0'; // silver
-    }
-  }
+  const starColor = annotation.redoublement ? '#C0C0C0' : '#FFD700';
+  const starStroke = annotation.redoublement ? '#808080' : '#B8860B';
 
   const elements: JSX.Element[] = [];
 
-  // Moivre: full-height diagonal stripe behind the star
+  // Moivre: full-height diagonal stripe
   if (isFirstYearOverall) {
-    const moivreColor = moivre === 'public' ? '#4169E1' : '#FFFFFF';
+    const moivreColor = moivre === 'public' ? '#87CEEB' : '#FFFFFF';
     const stripW = w * 0.35;
-    const yTop = cy - h / 2;
-    // Diagonal stripe from top-right to bottom-left
+    const skew = stripW * 0.3;
     elements.push(
-      <polygon
-        key="moivre"
-        points={[
-          `${cx - stripW / 2},${yTop}`,
-          `${cx + stripW / 2},${yTop}`,
-          `${cx - stripW / 2},${yTop + h}`,
-          `${cx - stripW * 1.5},${yTop + h}`,
-        ].join(' ')}
-        fill={moivreColor}
-        opacity={0.6}
-      />
+      <polygon key="moivre" points={[
+        `${cx - stripW / 2 + skew},${barY}`,
+        `${cx + stripW / 2 + skew},${barY}`,
+        `${cx + stripW / 2 - skew},${barY + h}`,
+        `${cx - stripW / 2 - skew},${barY + h}`,
+      ].join(' ')} fill={moivreColor} opacity={0.7} />
     );
   }
 
-  // Determine what goes above and below the star to avoid overlap
-  // Above: étranger flag (priority) or rattrapage
-  // Below: alternance "a" (priority) or rattrapage (if étranger is above)
   const hasAbove = !!annotation.etranger || !!annotation.rattrapage;
   const hasBelow = !!annotation.alternance || (!!annotation.rattrapage && !!annotation.etranger);
-
-  const aboveY = cy - h * 0.3;
+  const aboveY = cy - h * 0.20;
   const belowY = cy + h * 0.38;
 
-  // Étranger flag — always above the star
   if (annotation.etranger) {
     elements.push(
-      <text
-        key="etranger"
-        x={cx} y={aboveY}
-        textAnchor="middle"
-        fontSize={8}
-      >
-        {annotation.etranger}
-      </text>
+      <text key="etranger" x={cx} y={aboveY} textAnchor="middle" fontSize={Math.round(h * 0.4)}>{annotation.etranger}</text>
     );
   }
 
-  // Rattrapage — above if no étranger, below if étranger occupies above
   if (annotation.rattrapage) {
     const rattrapY = annotation.etranger ? belowY : aboveY;
     elements.push(
-      <text
-        key="rattrapage"
-        x={cx} y={rattrapY}
-        textAnchor="middle"
-        fill={segTextColor}
-        fontSize={8}
-      >
-        🐮
-      </text>
+      <CowInsigne key="rattrapage" cx={cx} cy={rattrapY} size={h * 0.3} />
     );
   }
 
-  // Main symbol (star, 0, or e) — centered, slightly adjusted if annotations above/below
-  const starY = cy + (isAnnexe ? 2 : 3) + (hasAbove && hasBelow ? 0 : hasAbove ? 2 : hasBelow ? -1 : 0);
-  elements.push(
-    <text
-      key="main"
-      x={cx} y={starY}
-      textAnchor="middle"
-      fill={mainColor}
-      fontSize={fontSize}
-      fontWeight="bold"
-      opacity={0.95}
-    >
-      {mainSymbol}
-    </text>
-  );
+  const starYOffset = hasAbove && hasBelow ? 0 : hasAbove ? 2 : hasBelow ? -1 : 0;
+  const starCy = cy + starYOffset;
 
-  // Major: large palme next to the star
+  if (annotation.cesure) {
+    elements.push(
+      <text key="main" x={cx} y={starCy + starSize * 0.4} textAnchor="middle" fill={starColor} fontSize={starSize * 2.5} fontWeight="bold">0</text>
+    );
+  } else if (annotation.equivalence) {
+    elements.push(
+      <text key="main" x={cx} y={starCy + starSize * 0.4} textAnchor="middle" fill={starColor} fontSize={starSize * 2.5} fontWeight="bold" fontStyle="italic">e</text>
+    );
+  } else {
+    elements.push(
+      <StarInsigne key="main" cx={cx} cy={starCy} size={starSize} color={starColor} stroke={starStroke} />
+    );
+  }
+
   if (annotation.major) {
     elements.push(
-      <text
-        key="major"
-        x={cx + fontSize * 0.5} y={starY}
-        textAnchor="start"
-        fill={segTextColor}
-        fontSize={fontSize * 0.6}
-        opacity={0.9}
-      >
-        🌿
-      </text>
+      <PalmeInsigne key="major" cx={cx + starSize * 1.5} cy={starCy} size={starSize * 1.2} color="#FFD700" />
     );
   }
 
-  // Alternance: "a" always below
   if (annotation.alternance) {
-    const altY = annotation.rattrapage && annotation.etranger
-      ? belowY + 8  // rattrapage already at belowY
-      : belowY;
+    const altY = annotation.rattrapage && annotation.etranger ? belowY + 8 : belowY;
     elements.push(
-      <text
-        key="alternance"
-        x={cx} y={altY}
-        textAnchor="middle"
-        fill={segTextColor}
-        fontSize={7}
-        fontStyle="italic"
-      >
-        a
-      </text>
+      <text key="alternance" x={cx} y={altY} textAnchor="middle" fill="#FFD700" stroke="#B8860B" strokeWidth={0.3} fontSize={Math.round(h * 0.2)} fontWeight="bold" fontStyle="italic">a</text>
     );
   }
 
   return <g>{elements}</g>;
 }
 
-function MarkerRender({ type, cx, cy, h, segColor }: {
-  type: 'diplome' | 'palmeCycle' | 'abandon'; cx: number; cy: number; h: number; segColor: string;
+function LabelRender({ text, cx, cy, h }: {
+  text: string; cx: number; cy: number; h: number;
 }) {
-  const textColor = getTextColor(segColor);
-  const fontSize = h * 0.4;
-
-  let symbol: string;
-  switch (type) {
-    case 'diplome':
-      symbol = '🏆'; // double palme croisée de lauriers
-      break;
-    case 'palmeCycle':
-      symbol = '🌿'; // simple palme
-      break;
-    case 'abandon':
-      symbol = '☠'; // tête de mort
-      break;
-  }
-
+  const fontSize = Math.round(h * 0.28);
   return (
-    <text
-      x={cx} y={cy + fontSize * 0.2}
-      textAnchor="middle"
-      fill={textColor}
-      fontSize={fontSize}
-    >
-      {symbol}
+    <text x={cx} y={cy + fontSize * 0.35} textAnchor="middle" fill="#FFD700" stroke="#B8860B" strokeWidth={0.4} fontSize={fontSize} fontWeight="bold" fontFamily="serif">
+      {text}
     </text>
   );
 }
 
-function EndRender({ type, cx, cy, h, baptemeColor }: {
-  type: 'quille' | 'abeille'; cx: number; cy: number; h: number; baptemeColor: string;
+function MarkerRender({ type, cx, cy, h }: {
+  type: 'diplome' | 'palmeCycle' | 'abandon'; cx: number; cy: number; h: number;
 }) {
-  const textColor = getTextColor(baptemeColor);
-  const fontSize = h * 0.4;
+  const size = h * 0.4;
+  switch (type) {
+    case 'diplome':
+      return <WreathInsigne cx={cx} cy={cy} size={size} />;
+    case 'palmeCycle':
+      return <PalmeInsigne cx={cx} cy={cy} size={size} />;
+    case 'abandon':
+      return <SkullInsigne cx={cx} cy={cy} size={size} />;
+  }
+}
 
-  const symbol = type === 'quille' ? '🎳' : '🐝';
-
-  return (
-    <text
-      x={cx} y={cy + fontSize * 0.2}
-      textAnchor="middle"
-      fill={textColor}
-      fontSize={fontSize}
-    >
-      {symbol}
-    </text>
-  );
+function EndRender({ type, cx, cy, h }: {
+  type: 'quille' | 'abeille'; cx: number; cy: number; h: number;
+}) {
+  const size = h * 0.3;
+  switch (type) {
+    case 'quille':
+      return <QuilleInsigne cx={cx} cy={cy} size={size} />;
+    case 'abeille':
+      return <BeeInsigne cx={cx} cy={cy} size={size} />;
+  }
 }

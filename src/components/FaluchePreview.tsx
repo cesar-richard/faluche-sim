@@ -8,15 +8,15 @@ interface FaluchePreviewProps {
   faluche: Faluche;
 }
 
-const SVG_WIDTH = 500;
+const SVG_WIDTH = 600;
 const SVG_HEIGHT = 620;
 const CIRCLE_CX = 250;
 const CIRCLE_CY = 240;
 const CIRCLE_RADIUS = 200;
 const CIRCULAIRE_X = 20;
-const CIRCULAIRE_Y = 490;
-const CIRCULAIRE_WIDTH = 460;
-const CIRCULAIRE_HEIGHT = 40;
+const CIRCULAIRE_Y = 472;
+const CIRCULAIRE_WIDTH = 560;
+const CIRCULAIRE_HEIGHT = 60;
 
 const RUBAN_WIDTH = 18;
 const ECUSSON_SIZE = 34;
