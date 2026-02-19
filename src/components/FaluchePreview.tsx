@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useImperativeHandle, forwardRef } from 'react';
 import type { Faluche } from '../data/types';
 import { Velours } from './Velours';
 import { CirculaireBar } from './CirculaireBar';
@@ -54,8 +54,12 @@ function branchEnd(angleDeg: number): { x: number; y: number } {
 const leftBranch = branchEnd(-60);
 const rightBranch = branchEnd(60);
 
-export function FaluchePreview({ faluche, selectedInsigneId, onSelectInsigne, onMoveInsigne }: FaluchePreviewProps) {
+export const FaluchePreview = forwardRef<SVGSVGElement, FaluchePreviewProps>(function FaluchePreview(
+  { faluche, selectedInsigneId, onSelectInsigne, onMoveInsigne },
+  ref,
+) {
   const svgRef = useRef<SVGSVGElement>(null);
+  useImperativeHandle(ref, () => svgRef.current as SVGSVGElement);
   const villeEtude = faluche.villeEtude;
 
   // Ecusson positions on the ribbons
@@ -191,4 +195,4 @@ export function FaluchePreview({ faluche, selectedInsigneId, onSelectInsigne, on
       />
     </svg>
   );
-}
+});

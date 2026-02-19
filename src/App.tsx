@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import type { Faluche, Circulaire, Insigne } from './data/types';
 import { createDefaultFaluche } from './data/types';
 import type { Ville, Province } from './data/villes';
@@ -9,6 +9,7 @@ import { VilleSelector } from './components/VilleSelector';
 import { InsignesEditor } from './components/InsignesEditor';
 import { SaveLoadButtons } from './components/SaveLoadButtons';
 import { encodeFaluche, decodeFaluche, getShareHash, setShareHash } from './utils/sharing';
+import { exportSvgAsPng } from './utils/exportPng';
 
 type MobileTab = 'preview' | 'edition';
 type Section = 'cursus' | 'insignes' | 'villes' | 'fichier';
@@ -18,6 +19,13 @@ function App() {
   const [selectedInsigneId, setSelectedInsigneId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<MobileTab>('preview');
   const [activeSection, setActiveSection] = useState<Section>('cursus');
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  const handleExportPng = useCallback(() => {
+    if (!svgRef.current) return;
+    const name = faluche.proprietaire || 'sans-nom';
+    exportSvgAsPng(svgRef.current, `faluche-${name}.png`);
+  }, [faluche.proprietaire]);
 
   function handleCirculaireChange(circulaire: Circulaire) {
     setFaluche((prev) => ({ ...prev, circulaire }));
@@ -123,6 +131,7 @@ function App() {
 
   const previewBlock = (
     <FaluchePreview
+      ref={svgRef}
       faluche={faluche}
       selectedInsigneId={selectedInsigneId}
       onSelectInsigne={setSelectedInsigneId}
@@ -183,7 +192,7 @@ function App() {
         active={activeSection}
         onToggle={(id) => setActiveSection(id as Section)}
       >
-        <SaveLoadButtons faluche={faluche} onLoad={handleLoad} onShare={handleShare} />
+        <SaveLoadButtons faluche={faluche} onLoad={handleLoad} onShare={handleShare} onExportPng={handleExportPng} />
       </AccordionSection>
     </div>
   );

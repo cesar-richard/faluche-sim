@@ -1,4 +1,9 @@
 // SVG components for all personal insignes on the velours
+import { AigleInsigne, AncreInsigne, CocottePapierInsigne, CornueBallonInsigne, CupidonInsigne, EcureuilInsigne, FleurLysInsigne } from './insignes-batch1';
+import { FourchettesCroiseesInsigne, FraiseInsigne, LacetCuirInsigne, MarteauMailletInsigne, NounoursInsigne, RaquetteBallonInsigne, RoseInsigne } from './insignes-batch2';
+import { SkisInsigne, TeteTaureauInsigne, VoilierInsigne, OrchideeInsigne, EscargotInsigne } from './insignes-batch3';
+import { ChauveSourisInsigne, EpingleRubanNoirInsigne, HomardInsigne, LimeRubanNoirInsigne, LyreTeteMortInsigne, ParapluieFermeEnversInsigne } from './insignes-batch4';
+import { ChardonInsigne, CigaleInsigne, CigogneInsigne, HermineInsigne, HoueInsigne, LionRampantInsigne, LeopardInsigne, SabotInsigne, SanglierInsigne, TasteVinInsigne } from './insignes-batch5';
 
 interface InsigneProps {
   cx: number;
@@ -1974,6 +1979,45 @@ const INSIGNE_COMPONENTS: Record<string, (props: InsigneProps) => React.JSX.Elem
   singe: SingeInsigne,
   sou_troue: SouTroueInsigne,
   volant: VolantInsigne,
+  // Batch imports — auto-attribués
+  aigle: AigleInsigne,
+  ancre: AncreInsigne,
+  cocotte_papier: CocottePapierInsigne,
+  cornue_ballon: CornueBallonInsigne,
+  cupidon: CupidonInsigne,
+  ecureuil: EcureuilInsigne,
+  fleur_lys: FleurLysInsigne,
+  fourchettes_croisees: FourchettesCroiseesInsigne,
+  fraise: FraiseInsigne,
+  lacet_cuir: LacetCuirInsigne,
+  marteau_maillet: MarteauMailletInsigne,
+  nounours: NounoursInsigne,
+  raquette_ballon: RaquetteBallonInsigne,
+  rose: RoseInsigne,
+  skis: SkisInsigne,
+  tete_taureau: TeteTaureauInsigne,
+  voilier: VoilierInsigne,
+  // Partenaire
+  orchidee: OrchideeInsigne,
+  escargot: EscargotInsigne,
+  // Grand Maître
+  chauve_souris: ChauveSourisInsigne,
+  epingle_ruban_noir: EpingleRubanNoirInsigne,
+  homard: HomardInsigne,
+  lime_ruban_noir: LimeRubanNoirInsigne,
+  lyre_tete_mort: LyreTeteMortInsigne,
+  parapluie_ferme_envers: ParapluieFermeEnversInsigne,
+  // Régionaux
+  chardon: ChardonInsigne,
+  cigale: CigaleInsigne,
+  cigogne: CigogneInsigne,
+  hermine: HermineInsigne,
+  houe: HoueInsigne,
+  lion_rampant: LionRampantInsigne,
+  leopard: LeopardInsigne,
+  sabot: SabotInsigne,
+  sanglier: SanglierInsigne,
+  taste_vin: TasteVinInsigne,
 };
 
 function PlaceholderInsigne({ cx, cy, size, color = '#FFD700' }: InsigneProps & { id?: string }) {

@@ -5,9 +5,10 @@ interface SaveLoadButtonsProps {
   faluche: Faluche;
   onLoad: (faluche: Faluche) => void;
   onShare: () => Promise<void>;
+  onExportPng: () => void;
 }
 
-export function SaveLoadButtons({ faluche, onLoad, onShare }: SaveLoadButtonsProps) {
+export function SaveLoadButtons({ faluche, onLoad, onShare, onExportPng }: SaveLoadButtonsProps) {
   const [shareStatus, setShareStatus] = useState<'idle' | 'copied' | 'error'>('idle');
 
   async function handleShare() {
@@ -75,11 +76,10 @@ export function SaveLoadButtons({ faluche, onLoad, onShare }: SaveLoadButtonsPro
         {shareStatus === 'copied' ? 'Lien copié !' : shareStatus === 'error' ? 'Erreur' : 'Copier le lien de partage'}
       </button>
       <button
-        disabled
-        className="rounded-lg border border-gray-800 px-4 py-2 text-sm text-gray-600 cursor-not-allowed"
-        title="Bientôt disponible"
+        onClick={onExportPng}
+        className="rounded-lg border border-gray-700 bg-gray-900 px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-800 transition-colors"
       >
-        Exporter PNG (bientôt)
+        Exporter PNG
       </button>
     </div>
   );
