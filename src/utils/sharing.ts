@@ -1,86 +1,115 @@
-import type { Faluche, CursusSegment, AnneeAnnotation, Insigne } from '../data/types';
+import type { Faluche, CursusSegment, AnneeAnnotation, Insigne, TypeBac } from '../data/types';
 import { FILIERES } from '../data/filieres';
 import { INSIGNES_CATALOG } from '../data/insignes';
+import { VILLES } from '../data/villes';
+import { PAYS } from '../data/pays';
 
-// --- Compact representation types (short keys to minimize size) ---
+// --- Lookup helpers ---
 
-interface CompactFaluche {
-  p: string;                          // proprietaire
-  c: CompactCirculaire;
-  i: CompactInsigne[];                // insignes
-  ve: string;                         // villeEtude nom
-  vn?: string;                        // villeNaissance nom
-  pn?: string;                        // provinceNaissance nom
+const TYPE_BACS: TypeBac[] = ['general', 'international', 'S', 'techno', 'pro', 'capacitaire', 'daeu'];
+
+function indexOf<T>(arr: readonly T[], pred: (item: T) => boolean): number {
+  const idx = arr.findIndex(pred);
+  return idx === -1 ? 0 : idx;
 }
 
-interface CompactCirculaire {
-  s: CompactSegment[];
-  b: number;                          // baptemeIndex
-  i: string;                          // initiales
-  sn: string;                         // surnom
-  ab: number;                         // anneeBac
-  tb: string;                         // typeBac
-  m: string;                          // moivre
-  q?: 1;                              // quille
-  a?: 1;                              // abeille
+// --- V1 types (legacy, decode only) ---
+
+interface CompactFalucheV1 {
+  p: string;
+  c: { s: CompactSegmentV1[]; b: number; i: string; sn: string; ab: number; tb: string; m: string; q?: 1; a?: 1 };
+  i: CompactInsigneV1[];
+  ve: string;
+  vn?: string;
+  pn?: string;
+}
+interface CompactSegmentV1 {
+  f: string; a: number; l?: string; an?: Record<string, CompactAnnotationV1>; d?: 1; pc?: 1; ab?: 1;
+}
+interface CompactAnnotationV1 {
+  r?: 1; m?: 1; ra?: 1; al?: 1; e?: string; eq?: 1; c?: 1; an?: 1;
+}
+interface CompactInsigneV1 {
+  i: string; s?: string; r?: 1; x: number; y: number; a?: number; n?: number;
 }
 
-interface CompactSegment {
-  f: string;                          // filiere name (couleur+matiere derived)
-  a: number;                          // annees
-  l?: string;                         // label
-  an?: Record<string, CompactAnnotation>;
-  d?: 1;                              // diplome
-  pc?: 1;                             // palmeCycle
-  ab?: 1;                             // abandon
+// --- V2 types (current, numeric indices) ---
+
+interface CompactFalucheV2 {
+  v: 2;
+  p: string;                    // proprietaire
+  c: CompactCirculaireV2;
+  i: CompactInsigneV2[];
+  ve: number;                   // villeEtude index in VILLES
+  vn?: number;                  // villeNaissance index in VILLES
+  // province derived from ville de naissance
 }
 
-interface CompactAnnotation {
-  r?: 1;   // redoublement
-  m?: 1;   // major
-  ra?: 1;  // rattrapage
-  al?: 1;  // alternance
-  e?: string; // etranger
-  eq?: 1;  // equivalence
-  c?: 1;   // cesure
-  an?: 1;  // annexe
+interface CompactCirculaireV2 {
+  s: CompactSegmentV2[];
+  b: number;                    // baptemeIndex
+  i: string;                    // initiales
+  sn: string;                   // surnom
+  ab: number;                   // anneeBac
+  tb: number;                   // typeBac index in TYPE_BACS
+  m: number;                    // 0=public, 1=prive
+  q?: 1;
+  a?: 1;
 }
 
-interface CompactInsigne {
-  i: string;                          // id
-  s?: string;                         // svgId
-  r?: 1;                              // retourne
-  x: number;                          // position.x (rounded)
-  y: number;                          // position.y (rounded)
-  a?: number;                         // annee
-  n?: number;                         // nombreCousu
+interface CompactSegmentV2 {
+  f: number;                    // filiere index in FILIERES
+  a: number;                    // annees
+  l?: string;                   // label
+  an?: Record<string, CompactAnnotationV2>;
+  d?: 1;
+  pc?: 1;
+  ab?: 1;
 }
 
-// --- Encode ---
+interface CompactAnnotationV2 {
+  r?: 1; m?: 1; ra?: 1; al?: 1;
+  e?: number;                   // etranger: index in PAYS
+  eq?: 1; c?: 1; an?: 1;
+}
 
-function compactAnnotation(ann: AnneeAnnotation): CompactAnnotation {
-  const c: CompactAnnotation = {};
+interface CompactInsigneV2 {
+  i: number;                    // index in INSIGNES_CATALOG
+  x: number;                    // position.x * 100, rounded
+  y: number;                    // position.y * 100, rounded
+  a?: number;                   // annee
+  n?: number;                   // nombreCousu
+  // retourne + svgId derived from catalog entry
+}
+
+// --- V2 Encode ---
+
+function compactAnnotationV2(ann: AnneeAnnotation): CompactAnnotationV2 {
+  const c: CompactAnnotationV2 = {};
   if (ann.redoublement) c.r = 1;
   if (ann.major) c.m = 1;
   if (ann.rattrapage) c.ra = 1;
   if (ann.alternance) c.al = 1;
-  if (ann.etranger) c.e = ann.etranger;
+  if (ann.etranger) c.e = indexOf(PAYS, p => p.drapeau === ann.etranger);
   if (ann.equivalence) c.eq = 1;
   if (ann.cesure) c.c = 1;
   if (ann.annexe) c.an = 1;
   return c;
 }
 
-function compactSegment(seg: CursusSegment): CompactSegment {
-  const c: CompactSegment = { f: seg.filiere, a: seg.annees };
+function compactSegmentV2(seg: CursusSegment): CompactSegmentV2 {
+  const c: CompactSegmentV2 = {
+    f: indexOf(FILIERES, f => f.nom === seg.filiere),
+    a: seg.annees,
+  };
   if (seg.label) c.l = seg.label;
   if (seg.diplome) c.d = 1;
   if (seg.palmeCycle) c.pc = 1;
   if (seg.abandon) c.ab = 1;
   if (seg.annotations) {
-    const cann: Record<string, CompactAnnotation> = {};
+    const cann: Record<string, CompactAnnotationV2> = {};
     for (const [k, v] of Object.entries(seg.annotations)) {
-      const ca = compactAnnotation(v);
+      const ca = compactAnnotationV2(v);
       if (Object.keys(ca).length > 0) cann[k] = ca;
     }
     if (Object.keys(cann).length > 0) c.an = cann;
@@ -88,45 +117,130 @@ function compactSegment(seg: CursusSegment): CompactSegment {
   return c;
 }
 
-function compactInsigne(ins: Insigne): CompactInsigne {
-  const c: CompactInsigne = {
-    i: ins.id,
-    x: Math.round(ins.position.x * 100) / 100,
-    y: Math.round(ins.position.y * 100) / 100,
+function compactInsigneV2(ins: Insigne): CompactInsigneV2 {
+  const c: CompactInsigneV2 = {
+    i: indexOf(INSIGNES_CATALOG, d => d.id === ins.id),
+    x: Math.round(ins.position.x * 100),
+    y: Math.round(ins.position.y * 100),
   };
-  if (ins.svgId) c.s = ins.svgId;
-  if (ins.retourne) c.r = 1;
   if (ins.annee != null) c.a = ins.annee;
   if (ins.nombreCousu != null && ins.nombreCousu > 0) c.n = ins.nombreCousu;
   return c;
 }
 
-function compactFaluche(f: Faluche): CompactFaluche {
+function compactFalucheV2(f: Faluche): CompactFalucheV2 {
   const circ = f.circulaire;
-  const c: CompactFaluche = {
+  const c: CompactFalucheV2 = {
+    v: 2,
     p: f.proprietaire,
     c: {
-      s: circ.segments.map(compactSegment),
+      s: circ.segments.map(compactSegmentV2),
       b: circ.baptemeIndex,
       i: circ.initiales,
       sn: circ.surnom,
       ab: circ.anneeBac,
-      tb: circ.typeBac,
-      m: circ.moivre,
+      tb: TYPE_BACS.indexOf(circ.typeBac),
+      m: circ.moivre === 'public' ? 0 : 1,
       ...(circ.quille ? { q: 1 as const } : {}),
       ...(circ.abeille ? { a: 1 as const } : {}),
     },
-    i: f.velours.insignes.map(compactInsigne),
-    ve: f.villeEtude.nom,
+    i: f.velours.insignes.map(compactInsigneV2),
+    ve: indexOf(VILLES, v => v.nom === f.villeEtude.nom),
   };
-  if (f.villeNaissance) c.vn = f.villeNaissance.nom;
-  if (f.provinceNaissance) c.pn = f.provinceNaissance.nom;
+  if (f.villeNaissance) c.vn = indexOf(VILLES, v => v.nom === f.villeNaissance!.nom);
   return c;
 }
 
-// --- Decode ---
+// --- V2 Decode ---
 
-function expandAnnotation(ca: CompactAnnotation): AnneeAnnotation {
+function expandAnnotationV2(ca: CompactAnnotationV2): AnneeAnnotation {
+  const a: AnneeAnnotation = {};
+  if (ca.r) a.redoublement = true;
+  if (ca.m) a.major = true;
+  if (ca.ra) a.rattrapage = true;
+  if (ca.al) a.alternance = true;
+  if (ca.e != null) a.etranger = PAYS[ca.e]?.drapeau ?? '';
+  if (ca.eq) a.equivalence = true;
+  if (ca.c) a.cesure = true;
+  if (ca.an) a.annexe = true;
+  return a;
+}
+
+function expandSegmentV2(cs: CompactSegmentV2): CursusSegment {
+  const filiere = FILIERES[cs.f];
+  const seg: CursusSegment = {
+    filiere: filiere?.nom ?? 'Sciences',
+    couleur: filiere?.couleur ?? '#888888',
+    matiere: filiere?.matiere ?? 'satin',
+    annees: cs.a,
+  };
+  if (cs.l) seg.label = cs.l;
+  if (cs.d) seg.diplome = true;
+  if (cs.pc) seg.palmeCycle = true;
+  if (cs.ab) seg.abandon = true;
+  if (cs.an) {
+    const annotations: Record<number, AnneeAnnotation> = {};
+    for (const [k, v] of Object.entries(cs.an)) {
+      annotations[Number(k)] = expandAnnotationV2(v);
+    }
+    seg.annotations = annotations;
+  }
+  return seg;
+}
+
+function expandInsigneV2(ci: CompactInsigneV2): Insigne {
+  const def = INSIGNES_CATALOG[ci.i];
+  const ins: Insigne = {
+    id: def?.id ?? 'unknown',
+    label: def?.label ?? 'unknown',
+    position: { x: ci.x / 100, y: ci.y / 100 },
+  };
+  if (def?.svgId) ins.svgId = def.svgId;
+  if (def?.defaultRetourne) ins.retourne = true;
+  if (ci.a != null) ins.annee = ci.a;
+  if (ci.n != null) ins.nombreCousu = ci.n;
+  return ins;
+}
+
+function expandFalucheV2(cf: CompactFalucheV2): Faluche {
+  const villeEtude = VILLES[cf.ve];
+  const villeNaissance = cf.vn != null ? VILLES[cf.vn] : undefined;
+  return {
+    proprietaire: cf.p,
+    ville: 'amiens',
+    dateCreation: new Date().toISOString(),
+    circulaire: {
+      segments: cf.c.s.map(expandSegmentV2),
+      baptemeIndex: cf.c.b,
+      initiales: cf.c.i,
+      surnom: cf.c.sn,
+      anneeBac: cf.c.ab,
+      typeBac: TYPE_BACS[cf.c.tb] ?? 'general',
+      moivre: cf.c.m === 0 ? 'public' : 'prive',
+      ...(cf.c.q ? { quille: true } : {}),
+      ...(cf.c.a ? { abeille: true } : {}),
+    },
+    velours: {
+      rubans: [],
+      insignes: cf.i.map(expandInsigneV2),
+    },
+    villeEtude: villeEtude
+      ? { nom: villeEtude.nom, couleurs: villeEtude.couleurs }
+      : { nom: 'Amiens', couleurs: ['#CC0000', '#4169E1'] },
+    ...(villeNaissance ? {
+      villeNaissance: { nom: villeNaissance.nom, couleurs: villeNaissance.couleurs },
+      provinceNaissance: (() => {
+        const prov = villeNaissance.province;
+        // Province couleurs resolved by App.tsx resolveVilleCouleurs
+        return { nom: prov, couleurs: ['#888', '#888'] as [string, string] };
+      })(),
+    } : {}),
+  };
+}
+
+// --- V1 Decode (legacy) ---
+
+function expandAnnotationV1(ca: CompactAnnotationV1): AnneeAnnotation {
   const a: AnneeAnnotation = {};
   if (ca.r) a.redoublement = true;
   if (ca.m) a.major = true;
@@ -139,7 +253,7 @@ function expandAnnotation(ca: CompactAnnotation): AnneeAnnotation {
   return a;
 }
 
-function expandSegment(cs: CompactSegment): CursusSegment {
+function expandSegmentV1(cs: CompactSegmentV1): CursusSegment {
   const filiere = FILIERES.find(f => f.nom === cs.f);
   const seg: CursusSegment = {
     filiere: cs.f,
@@ -154,14 +268,14 @@ function expandSegment(cs: CompactSegment): CursusSegment {
   if (cs.an) {
     const annotations: Record<number, AnneeAnnotation> = {};
     for (const [k, v] of Object.entries(cs.an)) {
-      annotations[Number(k)] = expandAnnotation(v);
+      annotations[Number(k)] = expandAnnotationV1(v);
     }
     seg.annotations = annotations;
   }
   return seg;
 }
 
-function expandInsigne(ci: CompactInsigne): Insigne {
+function expandInsigneV1(ci: CompactInsigneV1): Insigne {
   const def = INSIGNES_CATALOG.find(d => d.id === ci.i);
   const ins: Insigne = {
     id: ci.i,
@@ -175,15 +289,13 @@ function expandInsigne(ci: CompactInsigne): Insigne {
   return ins;
 }
 
-function expandFaluche(cf: CompactFaluche): Faluche {
-  // Ville/province lookups are done by the caller via handleLoad migration
-  // Here we just reconstruct the structure with nom only (couleurs filled by App)
+function expandFalucheV1(cf: CompactFalucheV1): Faluche {
   return {
     proprietaire: cf.p,
     ville: 'amiens',
     dateCreation: new Date().toISOString(),
     circulaire: {
-      segments: cf.c.s.map(expandSegment),
+      segments: cf.c.s.map(expandSegmentV1),
       baptemeIndex: cf.c.b,
       initiales: cf.c.i,
       surnom: cf.c.sn,
@@ -195,7 +307,7 @@ function expandFaluche(cf: CompactFaluche): Faluche {
     },
     velours: {
       rubans: [],
-      insignes: cf.i.map(expandInsigne),
+      insignes: cf.i.map(expandInsigneV1),
     },
     villeEtude: { nom: cf.ve, couleurs: ['#888', '#888'] },
     ...(cf.vn ? { villeNaissance: { nom: cf.vn, couleurs: ['#888', '#888'] as [string, string] } } : {}),
@@ -268,7 +380,7 @@ function fromBase64url(str: string): Uint8Array {
 // --- Public API ---
 
 export async function encodeFaluche(faluche: Faluche): Promise<string> {
-  const compact = compactFaluche(faluche);
+  const compact = compactFalucheV2(faluche);
   const json = JSON.stringify(compact);
   const bytes = new TextEncoder().encode(json);
   const compressed = await compress(bytes);
@@ -279,8 +391,12 @@ export async function decodeFaluche(encoded: string): Promise<Faluche> {
   const compressed = fromBase64url(encoded);
   const bytes = await decompress(compressed);
   const json = new TextDecoder().decode(bytes);
-  const compact = JSON.parse(json) as CompactFaluche;
-  return expandFaluche(compact);
+  const compact = JSON.parse(json);
+  // V2 has a `v` field, V1 does not
+  if (compact.v === 2) {
+    return expandFalucheV2(compact as CompactFalucheV2);
+  }
+  return expandFalucheV1(compact as CompactFalucheV1);
 }
 
 export function getShareHash(): string | null {
