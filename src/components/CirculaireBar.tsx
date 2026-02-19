@@ -14,7 +14,6 @@ interface CirculaireBarProps {
 }
 
 // Layout constants (as fractions of total width)
-const OEILLET_ZONE = 0.06;
 const SURNOM_ZONE = 0.20;
 const INITIALES_ZONE = 0.06;
 const BAC_ZONE = 0.10;
@@ -139,11 +138,10 @@ export function CirculaireBar({ x, y, width, height, circulaire }: CirculaireBar
 
   const baptemeColor = bapteme.couleur;
 
-  const oeilletW = width * OEILLET_ZONE;
   const surnomW = surnom ? width * SURNOM_ZONE : 0;
   const initialesW = initiales ? width * INITIALES_ZONE : 0;
   const bacW = width * BAC_ZONE;
-  const reservedW = oeilletW + surnomW + initialesW + bacW;
+  const reservedW = surnomW + initialesW + bacW;
   const cursusW = width - reservedW;
   const cursusStartX = x + reservedW;
 
@@ -152,10 +150,9 @@ export function CirculaireBar({ x, y, width, height, circulaire }: CirculaireBar
   const totalWeight = slots.reduce((s, sl) => s + slotWeight(sl), 0);
   const compactW = totalWeight * height * 0.7;
   const effectiveCursusW = Math.min(cursusW, Math.max(compactW, cursusW * 0.5));
-  const cursusOffset = (cursusW - effectiveCursusW) / 2;
 
   const slotPositions: { slot: Slot; cx: number; w: number }[] = [];
-  let slotX = cursusStartX + cursusOffset;
+  let slotX = cursusStartX;
   let frontalX = cursusStartX;
   let foundFrontal = false;
 
@@ -189,9 +186,9 @@ export function CirculaireBar({ x, y, width, height, circulaire }: CirculaireBar
   const bacStr = `${String(anneeBac % 100).padStart(2, '0')}`;
   const typeBacStr = getTypeBacStr(typeBac ?? 'general');
   // X positions for each zone
-  const surnomX = x + oeilletW + surnomW / 2;
-  const initialesX = x + oeilletW + surnomW + initialesW / 2;
-  const bacX = x + oeilletW + surnomW + initialesW + bacW / 2;
+  const surnomX = x + surnomW / 2;
+  const initialesX = x + surnomW + initialesW / 2;
+  const bacX = x + surnomW + initialesW + bacW / 2;
 
   return (
     <g>
@@ -230,10 +227,6 @@ export function CirculaireBar({ x, y, width, height, circulaire }: CirculaireBar
           return <EndRender key={`e-${i}`} type={slot.type} cx={scx} cy={cy} h={height} />;
         })}
       </g>
-
-      {/* Oeillet */}
-      <circle cx={x + oeilletW / 2} cy={cy} r={height * 0.28} fill="#FFD700" stroke="#B8860B" strokeWidth={1.5} />
-      <circle cx={x + oeilletW / 2} cy={cy} r={height * 0.12} fill="#111827" stroke="#B8860B" strokeWidth={1} />
 
       {/* Surnom */}
       {surnom && (

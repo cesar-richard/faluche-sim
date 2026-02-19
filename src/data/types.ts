@@ -113,7 +113,7 @@ export function createDefaultFaluche(): Faluche {
       ],
       "baptemeIndex": 1,
       "initiales": "CR",
-      "surnom": "sympath",
+      "surnom": "",
       "anneeBac": 2010,
       "typeBac": "S",
       "moivre": "public"
