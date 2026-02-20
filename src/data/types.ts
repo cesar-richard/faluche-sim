@@ -1,13 +1,17 @@
 import type { Matiere } from './filieres';
 
 export type TypeBac =
-  | 'general'        // Ɣ
-  | 'international'  // Ɣi  
-  | 'S'              // E
+  | 'general'        // γ (gamma minuscule, depuis 2021)
+  | 'ES'             // β (beta, ancien bac avant 2021)
+  | 'L'              // φ (phi, ancien bac avant 2021)
+  | 'S'              // ε (epsilon, ancien bac avant 2021)
+  | 'S_SVT'          // φε (spécificité Amiens : bac S spé SVT)
+  | 'international'  // I (après le bac)
   | 'techno'         // T
   | 'pro'            // P
   | 'capacitaire'    // C
-  | 'daeu';          // DAEU
+  | 'daeu'           // DAEU
+  | 'autre';         // initiale libre (ex: STMG, STI2D, ...)
 
 export interface AnneeAnnotation {
   redoublement?: boolean;  // étoile argentée au lieu de dorée
@@ -50,6 +54,7 @@ export interface Circulaire {
   surnom: string;
   anneeBac: number;
   typeBac: TypeBac;
+  typeBacAutre?: string;               // texte libre quand typeBac === 'autre' (ex: "STMG")
   moivre: 'public' | 'prive';  // bleu = État/public, blanc = privé
   quille?: boolean;             // service militaire/civique
   abeille?: boolean;            // cursus exemplaire

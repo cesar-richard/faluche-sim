@@ -10,14 +10,18 @@ interface CursusEditorProps {
 const veloursGroup = FILIERES.filter((f) => f.matiere === 'velours');
 const satinGroup = FILIERES.filter((f) => f.matiere === 'satin');
 
-const TYPE_BAC_OPTIONS: { value: TypeBac; label: string }[] = [
-  { value: 'general', label: 'Général (Ɣ)' },
-  { value: 'S', label: 'Bac S (ε)' },
-  { value: 'international', label: 'International (Ɣi)' },
-  { value: 'techno', label: 'Technologique (T)' },
-  { value: 'pro', label: 'Professionnel (P)' },
-  { value: 'capacitaire', label: 'Capacitaire (C)' },
-  { value: 'daeu', label: 'DAEU' },
+const TYPE_BAC_OPTIONS: { value: TypeBac; label: string; group: string }[] = [
+  { value: 'general', label: 'Général — γ (depuis 2021)', group: 'Nouveau bac' },
+  { value: 'ES', label: 'Éco. et Social — β', group: 'Ancien bac (avant 2021)' },
+  { value: 'L', label: 'Littéraire — φ', group: 'Ancien bac (avant 2021)' },
+  { value: 'S', label: 'Scientifique — ε', group: 'Ancien bac (avant 2021)' },
+  { value: 'S_SVT', label: 'Bac S spé SVT — φε (Amiens)', group: 'Ancien bac (avant 2021)' },
+  { value: 'techno', label: 'Technologique — T', group: 'Autres' },
+  { value: 'pro', label: 'Professionnel — P', group: 'Autres' },
+  { value: 'international', label: 'International — I', group: 'Autres' },
+  { value: 'capacitaire', label: 'Capacitaire — C', group: 'Autres' },
+  { value: 'daeu', label: 'DAEU', group: 'Autres' },
+  { value: 'autre', label: 'Autre (initiale libre)', group: 'Autres' },
 ];
 
 function newSegment(): CursusSegment {
@@ -134,10 +138,24 @@ export function CursusEditor({ circulaire, onChange }: CursusEditorProps) {
             onChange={(e) => update({ typeBac: e.target.value as TypeBac })}
             className="rounded border border-gray-700 bg-gray-900 px-2 py-1.5 text-xs text-white"
           >
-            {TYPE_BAC_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
+            {Array.from(new Set(TYPE_BAC_OPTIONS.map(o => o.group))).map(group => (
+              <optgroup key={group} label={group}>
+                {TYPE_BAC_OPTIONS.filter(o => o.group === group).map(o => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </optgroup>
             ))}
           </select>
+          {circulaire.typeBac === 'autre' && (
+            <input
+              type="text"
+              placeholder="Ex: STMG"
+              value={circulaire.typeBacAutre ?? ''}
+              onChange={(e) => update({ typeBacAutre: e.target.value.toUpperCase() })}
+              className="rounded border border-gray-700 bg-gray-900 px-2 py-1.5 text-xs text-white w-20 mt-1"
+              maxLength={6}
+            />
+          )}
         </div>
       </div>
 

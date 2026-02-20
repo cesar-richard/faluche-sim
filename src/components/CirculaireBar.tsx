@@ -18,15 +18,19 @@ const SURNOM_ZONE = 0.20;
 const INITIALES_ZONE = 0.06;
 const BAC_ZONE = 0.10;
 
-function getTypeBacStr(typeBac: TypeBac): string {
+function getTypeBacStr(typeBac: TypeBac, typeBacAutre?: string): string {
   switch (typeBac) {
-    case 'general': return 'Ɣ';
+    case 'general': return 'γ';
+    case 'ES': return 'β';
+    case 'L': return 'φ';
     case 'S': return 'ε';
-    case 'international': return 'Ɣi';
+    case 'S_SVT': return 'φε';
+    case 'international': return 'I';
     case 'techno': return 'T';
     case 'pro': return 'P';
     case 'capacitaire': return 'C';
     case 'daeu': return 'DAEU';
+    case 'autre': return typeBacAutre || '?';
   }
 }
 
@@ -172,7 +176,7 @@ export function CirculaireBar({ x, y, width, height, circulaire }: CirculaireBar
 
   const cy = y + height / 2;
   const bacStr = `${String(anneeBac % 100).padStart(2, '0')}`;
-  const typeBacStr = getTypeBacStr(typeBac ?? 'general');
+  const typeBacStr = getTypeBacStr(typeBac ?? 'general', circulaire.typeBacAutre);
   // X positions for each zone
   const surnomX = x + surnomW / 2;
   const initialesX = x + surnomW + initialesW / 2;

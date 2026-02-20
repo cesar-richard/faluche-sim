@@ -6,7 +6,7 @@ import { PAYS } from '../data/pays';
 
 // --- Lookup helpers ---
 
-const TYPE_BACS: TypeBac[] = ['general', 'international', 'S', 'techno', 'pro', 'capacitaire', 'daeu'];
+const TYPE_BACS: TypeBac[] = ['general', 'international', 'S', 'techno', 'pro', 'capacitaire', 'daeu', 'ES', 'L', 'S_SVT', 'autre'];
 
 function indexOf<T>(arr: readonly T[], pred: (item: T) => boolean): number {
   const idx = arr.findIndex(pred);
@@ -26,7 +26,7 @@ function indexOf<T>(arr: readonly T[], pred: (item: T) => boolean): number {
 type V3Annotation = [number, number] | [number, number, number];
 type V3Segment = [number, number, ...unknown[]]; // [fIdx, annees, label?, flags?, ...annotations?]
 type V3Insigne = [number, number, number, ...number[]]; // [catIdx, x, y, annee?, n?]
-type V3Circulaire = [V3Segment[], number, string, string, number, number, number];
+type V3Circulaire = [V3Segment[], number, string, string, number, number, number, ...string[]];
 
 interface CompactFalucheV3 {
   v: 3;
@@ -91,18 +91,21 @@ function encodeFalucheV3(f: Faluche): CompactFalucheV3 {
   if (circ.quille) circFlags |= 2;
   if (circ.abeille) circFlags |= 4;
 
+  const circArr: V3Circulaire = [
+    circ.segments.map(encodeSegmentV3),
+    circ.baptemeIndex,
+    circ.initiales,
+    circ.surnom,
+    circ.anneeBac,
+    TYPE_BACS.indexOf(circ.typeBac),
+    circFlags,
+  ];
+  if (circ.typeBac === 'autre' && circ.typeBacAutre) circArr.push(circ.typeBacAutre);
+
   const result: CompactFalucheV3 = {
     v: 3,
     p: f.proprietaire,
-    c: [
-      circ.segments.map(encodeSegmentV3),
-      circ.baptemeIndex,
-      circ.initiales,
-      circ.surnom,
-      circ.anneeBac,
-      TYPE_BACS.indexOf(circ.typeBac),
-      circFlags,
-    ],
+    c: circArr,
     i: f.velours.insignes.map(encodeInsigneV3),
     e: indexOf(VILLES, v => v.nom === f.villeEtude.nom),
   };
@@ -170,6 +173,8 @@ function decodeInsigneV3(arr: V3Insigne): Insigne {
 
 function decodeFalucheV3(cf: CompactFalucheV3): Faluche {
   const [segments, baptemeIdx, initiales, surnom, anneeBac, typeBacIdx, circFlags] = cf.c;
+  const typeBac = TYPE_BACS[typeBacIdx] ?? 'general';
+  const typeBacAutre = cf.c.length > 7 ? cf.c[7] : undefined;
   const villeEtude = VILLES[cf.e];
   const villeNaissance = cf.n != null ? VILLES[cf.n] : undefined;
 
@@ -183,7 +188,8 @@ function decodeFalucheV3(cf: CompactFalucheV3): Faluche {
       initiales,
       surnom,
       anneeBac,
-      typeBac: TYPE_BACS[typeBacIdx] ?? 'general',
+      typeBac,
+      ...(typeBacAutre ? { typeBacAutre } : {}),
       moivre: (circFlags & 1) ? 'prive' : 'public',
       ...((circFlags & 2) ? { quille: true } : {}),
       ...((circFlags & 4) ? { abeille: true } : {}),
