@@ -59,11 +59,19 @@ export function Velours({ cx, cy, radius, insignes, selectedId, onSelect, onMove
     onSelect(null);
   }
 
+  const clipId = 'clip-velours';
+
   return (
     <g
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
     >
+      <defs>
+        <clipPath id={clipId}>
+          <circle cx={cx} cy={cy} r={radius} />
+        </clipPath>
+      </defs>
+
       {/* Black circle */}
       <circle
         cx={cx} cy={cy} r={radius}
@@ -71,7 +79,8 @@ export function Velours({ cx, cy, radius, insignes, selectedId, onSelect, onMove
         onClick={handleBgClick}
       />
 
-      {/* Insignes */}
+      {/* Insignes — clipped to circle */}
+      <g clipPath={`url(#${clipId})`}>
       {insignes.map((insigne) => {
         const ix = cx + insigne.position.x * radius;
         const iy = cy + insigne.position.y * radius;
@@ -93,6 +102,7 @@ export function Velours({ cx, cy, radius, insignes, selectedId, onSelect, onMove
               size={INSIGNE_SIZE}
               annee={insigne.annee}
               nombreCousu={insigne.nombreCousu}
+              rubanBizut={insigne.rubanBizut}
             />
             {isSelected && (
               <circle
@@ -103,6 +113,7 @@ export function Velours({ cx, cy, radius, insignes, selectedId, onSelect, onMove
           </g>
         );
       })}
+      </g>
     </g>
   );
 }

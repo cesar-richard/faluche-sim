@@ -77,6 +77,7 @@ export interface Insigne {
   position: { x: number; y: number };  // normalized [-1, 1] relative to circle center/radius
   annee?: number;                       // for ciseaux: year of baptism
   nombreCousu?: number;                 // for ciseaux: number of faluches sewn (superscript)
+  rubanBizut?: boolean;                 // for ciseaux: blue ribbon if sewn during 1st year (bizut)
 }
 
 export function createDefaultFaluche(): Faluche {

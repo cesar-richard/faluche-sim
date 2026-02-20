@@ -52,6 +52,10 @@ export function InsignesEditor({ insignes, onChange, selectedId, onSelect }: Ins
     onChange(insignes.map(i => i.id === id ? { ...i, nombreCousu } : i));
   }
 
+  function toggleRubanBizut(id: string) {
+    onChange(insignes.map(i => i.id === id ? { ...i, rubanBizut: !i.rubanBizut } : i));
+  }
+
   function getDef(id: string): InsigneDef | undefined {
     return INSIGNES_CATALOG.find(d => d.id === id);
   }
@@ -80,7 +84,7 @@ export function InsignesEditor({ insignes, onChange, selectedId, onSelect }: Ins
                 onClick={() => onSelect(insigne.id)}
               >
                 <svg width={24} height={24} viewBox="-14 -14 28 28">
-                  <InsignePersonnel id={insigne.id} svgId={insigne.svgId} retourne={insigne.retourne} cx={0} cy={0} size={22} annee={insigne.annee} nombreCousu={insigne.nombreCousu} />
+                  <InsignePersonnel id={insigne.id} svgId={insigne.svgId} retourne={insigne.retourne} cx={0} cy={0} size={22} annee={insigne.annee} nombreCousu={insigne.nombreCousu} rubanBizut={insigne.rubanBizut} />
                 </svg>
                 <div className="flex-1 min-w-0">
                   <div className="font-medium text-gray-200 truncate">{insigne.label}</div>
@@ -106,6 +110,21 @@ export function InsignesEditor({ insignes, onChange, selectedId, onSelect }: Ins
                     onClick={(e) => e.stopPropagation()}
                     title="Nombre de faluches cousues"
                   />
+                )}
+                {insigne.id === 'ciseaux' && (
+                  <label
+                    className="flex items-center gap-1 text-xs text-gray-300 cursor-pointer"
+                    onClick={(e) => e.stopPropagation()}
+                    title="Ruban bleu : a cousu sa faluche en 1re annee (bizut)"
+                  >
+                    <input
+                      type="checkbox"
+                      className="accent-sky-400"
+                      checked={insigne.rubanBizut ?? false}
+                      onChange={() => toggleRubanBizut(insigne.id)}
+                    />
+                    Bizut
+                  </label>
                 )}
                 <button
                   onClick={(e) => { e.stopPropagation(); removeInsigne(insigne.id); }}

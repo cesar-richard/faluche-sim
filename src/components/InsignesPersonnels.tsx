@@ -269,18 +269,6 @@ function CiseauxInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }:
   const sw = s * 0.05;
   return (
     <g transform={`translate(${cx},${cy})`}>
-      {/* Blue ribbon behind the scissors */}
-      <rect x={-s * 0.12} y={-s * 0.75} width={s * 0.24} height={s * 1.5}
-        fill="#87CEEB" rx={s * 0.04}
-        stroke="#5B9BD5" strokeWidth={sw * 0.5} />
-      {/* Ribbon notch at bottom (V-cut) */}
-      <path d={`M ${-s * 0.12},${s * 0.75}
-               L ${-s * 0.12},${s * 0.85}
-               L 0,${s * 0.72}
-               L ${s * 0.12},${s * 0.85}
-               L ${s * 0.12},${s * 0.75} Z`}
-        fill="#87CEEB" stroke="#5B9BD5" strokeWidth={sw * 0.5} />
-
       {/* Left blade — going from pivot (center) to upper-left */}
       <path d={`M 0,0
                L ${-s * 0.18},${-s * 0.7}
@@ -2029,7 +2017,7 @@ function PlaceholderInsigne({ cx, cy, size, color = '#FFD700' }: InsigneProps & 
   );
 }
 
-export function InsignePersonnel({ id, svgId, retourne, cx, cy, size, annee, nombreCousu }: {
+export function InsignePersonnel({ id, svgId, retourne, cx, cy, size, annee, nombreCousu, rubanBizut }: {
   id: string;
   svgId?: string;
   retourne?: boolean;
@@ -2038,23 +2026,34 @@ export function InsignePersonnel({ id, svgId, retourne, cx, cy, size, annee, nom
   size: number;
   annee?: number;
   nombreCousu?: number;
+  rubanBizut?: boolean;
 }) {
   const Component = INSIGNE_COMPONENTS[svgId ?? id];
   const transform = retourne ? `rotate(180, ${cx}, ${cy})` : undefined;
 
-  // Ciseaux special: blue ribbon behind
+  // Ciseaux special: blue ribbon behind (only if sewn as bizut)
   const isCiseaux = id === 'ciseaux';
-  const ribbonW = size * 0.35;
-  const ribbonH = size * 0.8;
+  const s = size / 2;
+  const rsw = s * 0.05;
 
   return (
     <g>
-      {isCiseaux && (
-        <rect
-          x={cx - ribbonW / 2} y={cy - ribbonH * 0.3}
-          width={ribbonW} height={ribbonH}
-          fill="#87CEEB" rx={2}
-        />
+      {isCiseaux && rubanBizut && (
+        <g>
+          <rect
+            x={cx - s * 0.12} y={cy - s * 0.75}
+            width={s * 0.24} height={s * 1.5}
+            fill="#87CEEB" rx={s * 0.04}
+            stroke="#5B9BD5" strokeWidth={rsw * 0.5}
+          />
+          <path d={`M ${cx - s * 0.12},${cy + s * 0.75}
+                     L ${cx - s * 0.12},${cy + s * 0.85}
+                     L ${cx},${cy + s * 0.72}
+                     L ${cx + s * 0.12},${cy + s * 0.85}
+                     L ${cx + s * 0.12},${cy + s * 0.75} Z`}
+            fill="#87CEEB" stroke="#5B9BD5" strokeWidth={rsw * 0.5}
+          />
+        </g>
       )}
       <g transform={transform}>
         {Component

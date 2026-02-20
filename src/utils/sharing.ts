@@ -78,6 +78,7 @@ function encodeInsigneV3(ins: Insigne): V3Insigne {
   const catIdx = indexOf(INSIGNES_CATALOG, d => d.id === ins.id);
   const x = Math.round(ins.position.x * 100);
   const y = Math.round(ins.position.y * 100);
+  if (ins.rubanBizut) return [catIdx, x, y, ins.annee ?? 0, ins.nombreCousu ?? 0, 1];
   if (ins.nombreCousu != null && ins.nombreCousu > 0) return [catIdx, x, y, ins.annee ?? 0, ins.nombreCousu];
   if (ins.annee != null) return [catIdx, x, y, ins.annee];
   return [catIdx, x, y];
@@ -163,6 +164,7 @@ function decodeInsigneV3(arr: V3Insigne): Insigne {
   if (def?.defaultRetourne) ins.retourne = true;
   if (arr.length > 3) ins.annee = arr[3];
   if (arr.length > 4) ins.nombreCousu = arr[4];
+  if (arr.length > 5 && arr[5]) ins.rubanBizut = true;
   return ins;
 }
 
