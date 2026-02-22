@@ -696,6 +696,7 @@ export function DollarInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B886
 // --- Filière emblème mapper ---
 
 const FILIERE_INSIGNE_MAP: Record<string, (props: InsigneProps) => React.JSX.Element> = {
+  // --- Existants (indices 0-22) ---
   'Chirurgie dentaire': ToothInsigne,
   'Études courtes de santé': CrossInsigne,
   'Médecine': CaduceeMedInsigne,
@@ -719,6 +720,32 @@ const FILIERE_INSIGNE_MAP: Record<string, (props: InsigneProps) => React.JSX.Ele
   'Sciences': AtomInsigne,
   'Sciences économiques / Gestion / IAE': ChartInsigne,
   'Sciences politiques': TempleInsigne,
+  // --- Nouvelles filières ---
+  'Infirmier': AsclepiusInsigne,
+  'Kinésithérapie': AsclepiusInsigne,
+  'Préparateur en pharmacie': PharmacyInsigne,
+  'Archéologie': TempleInsigne,
+  'Géographie': BallInsigne,
+  'Histoire': BookInsigne,
+  'Philosophie': QuillInsigne,
+  'Psychologie': QuillInsigne,
+  'Sociologie': QuillInsigne,
+  'Arts': FlowerInsigne,
+  'Architecture': FlowerInsigne,
+  'Arts du spectacle / Théâtre': FlowerInsigne,
+  'Arts numériques': FlowerInsigne,
+  'Cinéma': FlowerInsigne,
+  'BTS': PencilInsigne,
+  'Communication / Journalisme': DollarInsigne,
+  'DU': BookInsigne,
+  'IAE': ChartInsigne,
+  'IUT': PencilInsigne,
+  'Militaire': EtoileFoudreInsigne,
+  'Notariat': ScalesInsigne,
+  'Thanatologie': CrossInsigne,
+  'Théologie': CrossInsigne,
+  'Assistante sociale': ScalesInsigne,
+  "Science de l'éducation": PencilInsigne,
 };
 
 export function FiliereEmbleme({ filiere, cx, cy, size, color, stroke }: { filiere: string } & InsigneProps) {
