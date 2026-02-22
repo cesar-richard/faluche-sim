@@ -3,6 +3,7 @@ import { BICOLORES } from '../data/filieres';
 import {
   StarInsigne, WreathInsigne, PalmeInsigne, SkullInsigne,
   CowInsigne, BeeInsigne, QuilleInsigne, FiliereEmbleme,
+  CochonCirculaireInsigne, CapacitaireInsigne,
 } from './Insignes';
 
 interface CirculaireBarProps {
@@ -63,7 +64,7 @@ interface YearSlot {
 
 interface MarkerSlot {
   kind: 'marker';
-  type: 'diplome' | 'palmeCycle' | 'abandon';
+  type: 'diplome' | 'palmeCycle' | 'abandon' | 'agregation' | 'capes';
   segIndex: number;
 }
 
@@ -85,10 +86,29 @@ interface EndSlot {
   type: 'quille' | 'abeille';
 }
 
-type Slot = YearSlot | LabelSlot | MarkerSlot | EmblemeSlot | EndSlot;
+interface CochonSlot {
+  kind: 'cochon';
+}
+
+interface CapacitaireSlot {
+  kind: 'capacitaire';
+  insigneId: string;
+}
+
+type Slot = YearSlot | LabelSlot | MarkerSlot | EmblemeSlot | EndSlot | CochonSlot | CapacitaireSlot;
 
 function buildSlots(circulaire: Circulaire): Slot[] {
   const slots: Slot[] = [];
+  // Cochon at start of circulaire for santé students (Amiens)
+  if (circulaire.cochonCirculaire) {
+    slots.push({ kind: 'cochon' });
+  }
+  // Capacitaires: insignes before initiales
+  if (circulaire.capacitaires) {
+    for (const id of circulaire.capacitaires) {
+      slots.push({ kind: 'capacitaire', insigneId: id });
+    }
+  }
   let isFirst = true;
   for (let si = 0; si < circulaire.segments.length; si++) {
     const seg = circulaire.segments[si];
@@ -107,6 +127,8 @@ function buildSlots(circulaire: Circulaire): Slot[] {
     if (seg.diplome) slots.push({ kind: 'marker', type: 'diplome', segIndex: si });
     if (seg.palmeCycle) slots.push({ kind: 'marker', type: 'palmeCycle', segIndex: si });
     if (seg.abandon) slots.push({ kind: 'marker', type: 'abandon', segIndex: si });
+    if (seg.agregation) slots.push({ kind: 'marker', type: 'agregation', segIndex: si });
+    if (seg.capes) slots.push({ kind: 'marker', type: 'capes', segIndex: si });
   }
   if (circulaire.quille) slots.push({ kind: 'end', type: 'quille' });
   if (circulaire.abeille) slots.push({ kind: 'end', type: 'abeille' });
@@ -116,8 +138,10 @@ function buildSlots(circulaire: Circulaire): Slot[] {
 function slotWeight(slot: Slot): number {
   if (slot.kind === 'year') return slot.annotation.annexe ? 0.4 : 0.8;
   if (slot.kind === 'label') return 0.8;
-  if (slot.kind === 'marker') return 0.8;
+  if (slot.kind === 'marker') return slot.type === 'agregation' || slot.type === 'capes' ? 0.5 : 0.8;
   if (slot.kind === 'embleme') return 1.2;
+  if (slot.kind === 'cochon') return 1.0;
+  if (slot.kind === 'capacitaire') return 0.8;
   return 0.5;
 }
 
@@ -215,6 +239,12 @@ export function CirculaireBar({ x, y, width, height, circulaire }: CirculaireBar
           }
           if (slot.kind === 'embleme') {
             return <FiliereEmbleme key={`emb-${i}`} filiere={slot.filiere} cx={scx} cy={cy} size={height * 0.55} color="#FFD700" stroke="#B8860B" />;
+          }
+          if (slot.kind === 'cochon') {
+            return <CochonCirculaireInsigne key={`cochon-${i}`} cx={scx} cy={cy} size={height * 0.5} />;
+          }
+          if (slot.kind === 'capacitaire') {
+            return <CapacitaireInsigne key={`cap-${i}`} insigneId={slot.insigneId} cx={scx} cy={cy} size={height * 0.45} />;
           }
           return <EndRender key={`e-${i}`} type={slot.type} cx={scx} cy={cy} h={height} />;
         })}
@@ -327,6 +357,29 @@ function YearRender({ slot, cx, cy, w, h, barY, moivre }: {
     );
   }
 
+  // Ruban noir under the star (perte ou vol de faluche)
+  if (annotation.perteVol) {
+    const ribbonW = w * 0.25;
+    elements.push(
+      <rect key="perteVol" x={cx - ribbonW / 2} y={starCy + starSize * 1.1} width={ribbonW} height={h * 0.3} fill="#222" stroke="#000" strokeWidth={0.5} rx={1} />
+    );
+  }
+
+  // Moivre change ribbon under the star
+  if (annotation.moivreChange) {
+    const moivreColor = annotation.moivreChange === 'public' ? '#87CEEB' : '#FFFFFF';
+    const stripW = w * 0.35;
+    const skew = stripW * 0.3;
+    elements.push(
+      <polygon key="moivreChange" points={[
+        `${cx - stripW / 2 + skew},${barY}`,
+        `${cx + stripW / 2 + skew},${barY}`,
+        `${cx + stripW / 2 - skew},${barY + h}`,
+        `${cx - stripW / 2 - skew},${barY + h}`,
+      ].join(' ')} fill={moivreColor} opacity={0.7} />
+    );
+  }
+
   return <g>{elements}</g>;
 }
 
@@ -342,7 +395,7 @@ function LabelRender({ text, cx, cy, h }: {
 }
 
 function MarkerRender({ type, cx, cy, h }: {
-  type: 'diplome' | 'palmeCycle' | 'abandon'; cx: number; cy: number; h: number;
+  type: 'diplome' | 'palmeCycle' | 'abandon' | 'agregation' | 'capes'; cx: number; cy: number; h: number;
 }) {
   const size = h * 0.4;
   switch (type) {
@@ -352,6 +405,14 @@ function MarkerRender({ type, cx, cy, h }: {
       return <PalmeInsigne cx={cx} cy={cy} size={size} />;
     case 'abandon':
       return <SkullInsigne cx={cx} cy={cy} size={size} />;
+    case 'agregation':
+      return (
+        <text x={cx} y={cy + h * 0.1} textAnchor="middle" fill="#FFD700" stroke="#B8860B" strokeWidth={0.3} fontSize={Math.round(h * 0.22)} fontWeight="bold" fontStyle="italic">a</text>
+      );
+    case 'capes':
+      return (
+        <text x={cx} y={cy + h * 0.1} textAnchor="middle" fill="#FFD700" stroke="#B8860B" strokeWidth={0.3} fontSize={Math.round(h * 0.22)} fontWeight="bold" fontStyle="italic">c</text>
+      );
   }
 }
 

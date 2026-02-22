@@ -748,6 +748,43 @@ const FILIERE_INSIGNE_MAP: Record<string, (props: InsigneProps) => React.JSX.Ele
   "Science de l'éducation": PencilInsigne,
 };
 
+/** Small cochon for circulaire (santé students, Amiens) */
+export function CochonCirculaireInsigne({ cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: InsigneProps) {
+  const s = size / 2;
+  const sw = s * 0.06;
+  return (
+    <g transform={`translate(${cx},${cy})`}>
+      <ellipse cx={0} cy={0} rx={s * 0.5} ry={s * 0.35} fill={color} stroke={stroke} strokeWidth={sw} />
+      <ellipse cx={s * 0.4} cy={-s * 0.05} rx={s * 0.18} ry={s * 0.2} fill={color} stroke={stroke} strokeWidth={sw} />
+      <ellipse cx={s * 0.55} cy={0} rx={s * 0.08} ry={s * 0.06} fill={color} stroke={stroke} strokeWidth={sw * 0.7} />
+      <circle cx={s * 0.42} cy={-s * 0.12} r={s * 0.03} fill={stroke} />
+      <path d={`M ${-s * 0.45},${-s * 0.12} Q ${-s * 0.6},${-s * 0.3} ${-s * 0.48},${-s * 0.2}`} fill="none" stroke={stroke} strokeWidth={sw} strokeLinecap="round" />
+      <line x1={-s * 0.2} y1={s * 0.3} x2={-s * 0.2} y2={s * 0.5} stroke={stroke} strokeWidth={sw * 1.2} />
+      <line x1={s * 0.15} y1={s * 0.3} x2={s * 0.15} y2={s * 0.5} stroke={stroke} strokeWidth={sw * 1.2} />
+    </g>
+  );
+}
+
+/** Capacitaire insigne renderer for circulaire */
+export function CapacitaireInsigne({ insigneId, cx, cy, size, color = '#FFD700', stroke = '#B8860B' }: { insigneId: string } & InsigneProps) {
+  // Simple symbols for each capacitaire
+  const s = size / 2;
+  switch (insigneId) {
+    case 'aigle':
+      return <text x={cx} y={cy + s * 0.3} textAnchor="middle" fill={color} fontSize={size * 0.6} fontFamily="serif">A</text>;
+    case 'lyre':
+      return <text x={cx} y={cy + s * 0.3} textAnchor="middle" fill={color} fontSize={size * 0.6} fontFamily="serif">L</text>;
+    case 'palette':
+      return <text x={cx} y={cy + s * 0.3} textAnchor="middle" fill={color} fontSize={size * 0.6} fontFamily="serif">P</text>;
+    case 'plume':
+      return <text x={cx} y={cy + s * 0.3} textAnchor="middle" fill={color} fontSize={size * 0.6} fontFamily="serif">E</text>;
+    case 'voilier':
+      return <text x={cx} y={cy + s * 0.3} textAnchor="middle" fill={color} fontSize={size * 0.6} fontFamily="serif">V</text>;
+    default:
+      return <circle cx={cx} cy={cy} r={s * 0.3} fill="none" stroke={color} strokeWidth={s * 0.06} />;
+  }
+}
+
 export function FiliereEmbleme({ filiere, cx, cy, size, color, stroke }: { filiere: string } & InsigneProps) {
   const Component = FILIERE_INSIGNE_MAP[filiere];
   if (Component) {

@@ -22,6 +22,8 @@ export interface AnneeAnnotation {
   equivalence?: boolean;   // "e" au lieu de l'étoile
   cesure?: boolean;        // "0" au lieu de l'étoile
   annexe?: boolean;        // taille plus petite (discipline annexe)
+  perteVol?: boolean;      // ruban noir sous l'étoile (perte ou vol de faluche)
+  moivreChange?: 'public' | 'prive';  // changement de moivre (nouveau ruban sous l'étoile)
 }
 
 export interface Faluche {
@@ -45,6 +47,8 @@ export interface CursusSegment {
   diplome?: boolean;       // double palme croisée de lauriers (diplôme obtenu)
   palmeCycle?: boolean;    // simple palme (fin de cycle sans diplôme)
   abandon?: boolean;       // tête de mort (abandon / réorientation)
+  agregation?: boolean;    // petit "a" en fin de cursus
+  capes?: boolean;         // petit "c" en fin de cursus
 }
 
 export interface Circulaire {
@@ -58,6 +62,8 @@ export interface Circulaire {
   moivre: 'public' | 'prive';  // bleu = État/public, blanc = privé
   quille?: boolean;             // service militaire/civique
   abeille?: boolean;            // cursus exemplaire
+  cochonCirculaire?: boolean;   // cochon en début de circulaire (santé sauf Pharmacie, Amiens)
+  capacitaires?: string[];      // insignes avant initiales (Aigle, Lyre, Palette, Plume, Voilier)
 }
 
 export interface Velours {

@@ -24,6 +24,14 @@ const TYPE_BAC_OPTIONS: { value: TypeBac; label: string; group: string }[] = [
   { value: 'autre', label: 'Autre (initiale libre)', group: 'Autres' },
 ];
 
+const CAPACITAIRE_OPTIONS = [
+  { id: 'aigle', label: 'Aigle (brevet pilote)' },
+  { id: 'lyre', label: 'Lyre (musicien)' },
+  { id: 'palette', label: 'Palette (artiste)' },
+  { id: 'plume', label: 'Plume (écrivain)' },
+  { id: 'voilier', label: 'Voilier (permis bateau)' },
+];
+
 function newSegment(): CursusSegment {
   const f = FILIERES[0];
   return { filiere: f.nom, couleur: f.couleur, matiere: f.matiere, annees: 1 };
@@ -240,6 +248,37 @@ export function CursusEditor({ circulaire, onChange }: CursusEditorProps) {
             />
             Abeille (cursus exemplaire)
           </label>
+          <label className="flex items-center gap-1.5 text-xs text-gray-300 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={!!circulaire.cochonCirculaire}
+              onChange={(e) => update({ cochonCirculaire: e.target.checked || undefined })}
+              className="accent-yellow-500"
+            />
+            Cochon circulaire (santé, Amiens)
+          </label>
+        </div>
+      </div>
+
+      {/* Capacitaires */}
+      <div className="flex flex-col gap-2">
+        <label className="text-xs text-gray-400">Capacitaires (avant initiales)</label>
+        <div className="flex flex-wrap gap-3">
+          {CAPACITAIRE_OPTIONS.map(({ id, label }) => (
+            <label key={id} className="flex items-center gap-1.5 text-xs text-gray-300 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={(circulaire.capacitaires ?? []).includes(id)}
+                onChange={(e) => {
+                  const current = circulaire.capacitaires ?? [];
+                  const next = e.target.checked ? [...current, id] : current.filter(c => c !== id);
+                  update({ capacitaires: next.length > 0 ? next : undefined });
+                }}
+                className="accent-yellow-500"
+              />
+              {label}
+            </label>
+          ))}
         </div>
       </div>
     </div>
@@ -385,6 +424,24 @@ function SegmentEditor({ seg, index: _index, isBapteme, isFirst, isLast, segment
           />
           Abandon
         </label>
+        <label className="flex items-center gap-1 text-gray-400 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={!!seg.agregation}
+            onChange={(e) => onSegmentUpdate({ agregation: e.target.checked || undefined })}
+            className="accent-yellow-500"
+          />
+          Agrégation
+        </label>
+        <label className="flex items-center gap-1 text-gray-400 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={!!seg.capes}
+            onChange={(e) => onSegmentUpdate({ capes: e.target.checked || undefined })}
+            className="accent-yellow-500"
+          />
+          CAPES
+        </label>
       </div>
 
       {/* Per-year annotations */}
@@ -403,6 +460,7 @@ function SegmentEditor({ seg, index: _index, isBapteme, isFirst, isLast, segment
                 <Toggle label="Equiv." checked={!!ann.equivalence} onChange={(v) => onAnnotationUpdate(yi, { equivalence: v || undefined, cesure: undefined })} />
                 <Toggle label="Césure" checked={!!ann.cesure} onChange={(v) => onAnnotationUpdate(yi, { cesure: v || undefined, equivalence: undefined })} />
                 <Toggle label="Annexe" checked={!!ann.annexe} onChange={(v) => onAnnotationUpdate(yi, { annexe: v || undefined })} />
+                <Toggle label="Perte/Vol" checked={!!ann.perteVol} onChange={(v) => onAnnotationUpdate(yi, { perteVol: v || undefined })} />
                 <div className="flex items-center gap-1">
                   <select
                     value={ann.etranger ?? ''}
@@ -413,6 +471,17 @@ function SegmentEditor({ seg, index: _index, isBapteme, isFirst, isLast, segment
                     {PAYS.map((p) => (
                       <option key={p.code} value={p.drapeau}>{p.drapeau} {p.nom}</option>
                     ))}
+                  </select>
+                </div>
+                <div className="flex items-center gap-1">
+                  <select
+                    value={ann.moivreChange ?? ''}
+                    onChange={(e) => onAnnotationUpdate(yi, { moivreChange: (e.target.value as 'public' | 'prive') || undefined })}
+                    className="rounded border border-gray-700 bg-gray-900 px-1 py-0 text-xs text-white"
+                  >
+                    <option value="">Moivre</option>
+                    <option value="public">→ Public</option>
+                    <option value="prive">→ Privé</option>
                   </select>
                 </div>
               </div>

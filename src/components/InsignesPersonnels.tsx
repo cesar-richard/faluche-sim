@@ -4,6 +4,7 @@ import { FourchettesCroiseesInsigne, FraiseInsigne, LacetCuirInsigne, MarteauMai
 import { SkisInsigne, TeteTaureauInsigne, VoilierInsigne, OrchideeInsigne, EscargotInsigne } from './insignes-batch3';
 import { ChauveSourisInsigne, EpingleRubanNoirInsigne, HomardInsigne, LimeRubanNoirInsigne, LyreTeteMortInsigne, ParapluieFermeEnversInsigne } from './insignes-batch4';
 import { ChardonInsigne, CigaleInsigne, CigogneInsigne, HermineInsigne, HoueInsigne, LionRampantInsigne, LeopardInsigne, SabotInsigne, SanglierInsigne, TasteVinInsigne } from './insignes-batch5';
+import { LuneInsigne, SoleilInsigne, FauxInsigne, CochonRubanBleuInsigne, SqueletteDiamantInsigne, SqueletteRubisInsigne, AbeilleRegionaleInsigne } from './insignes-batch6';
 
 interface InsigneProps {
   cx: number;
@@ -1925,7 +1926,6 @@ const INSIGNE_COMPONENTS: Record<string, (props: InsigneProps) => React.JSX.Elem
   squelette: SqueletteInsigne,
   ciseaux: CiseauxInsigne,
   // Auto-attribués
-  appareil_photo: AppareilPhotoInsigne,
   bacchus_troue: BacchusTroueInsigne,
   casque_pericles: CasquePericlesInsigne,
   chope_biere: ChopeBiereInsigne,
@@ -1936,7 +1936,6 @@ const INSIGNE_COMPONENTS: Record<string, (props: InsigneProps) => React.JSX.Elem
   fer_cheval: FerAChevalInsigne,
   feuille_vigne: FeuilleVigneInsigne,
   fourchette: FourchetteInsigne,
-  globe_vert: GlobeVertInsigne,
   grappe_raisin: GrappeRaisinInsigne,
   lyre: LyreInsignePerso,
   masque_comedie: MasqueComedieInsigne,
@@ -2006,6 +2005,15 @@ const INSIGNE_COMPONENTS: Record<string, (props: InsigneProps) => React.JSX.Elem
   sabot: SabotInsigne,
   sanglier: SanglierInsigne,
   taste_vin: TasteVinInsigne,
+  // Batch 6 — spec Amiens ajouts
+  lune: LuneInsigne,
+  soleil: SoleilInsigne,
+  faux: FauxInsigne,
+  cochon_ruban_bleu: CochonRubanBleuInsigne,
+  squelette_diamant: SqueletteDiamantInsigne,
+  squelette_rubis: SqueletteRubisInsigne,
+  abeille_regionale: AbeilleRegionaleInsigne,
+  fleur_lys: FleurLysInsigne,
 };
 
 function PlaceholderInsigne({ cx, cy, size, color = '#FFD700' }: InsigneProps & { id?: string }) {

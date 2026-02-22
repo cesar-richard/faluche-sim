@@ -39,13 +39,18 @@ interface CompactFalucheV3 {
 
 // --- V3 Encode ---
 
-const ANN_BITS = ['redoublement', 'major', 'rattrapage', 'alternance', 'equivalence', 'cesure', 'annexe'] as const;
-const SEG_BITS = ['diplome', 'palmeCycle', 'abandon'] as const;
+const ANN_BITS = ['redoublement', 'major', 'rattrapage', 'alternance', 'equivalence', 'cesure', 'annexe', 'perteVol'] as const;
+const SEG_BITS = ['diplome', 'palmeCycle', 'abandon', 'agregation', 'capes'] as const;
 
 function encodeAnnotationV3(yearIdx: number, ann: AnneeAnnotation): V3Annotation {
   let bitmask = 0;
   for (let i = 0; i < ANN_BITS.length; i++) {
     if (ann[ANN_BITS[i]]) bitmask |= (1 << i);
+  }
+  // bit 8 = moivreChange exists, bit 9 = moivreChange is 'prive'
+  if (ann.moivreChange) {
+    bitmask |= (1 << 8);
+    if (ann.moivreChange === 'prive') bitmask |= (1 << 9);
   }
   if (ann.etranger) {
     return [yearIdx, bitmask, indexOf(PAYS, p => p.drapeau === ann.etranger)];
@@ -90,6 +95,7 @@ function encodeFalucheV3(f: Faluche): CompactFalucheV3 {
   if (circ.moivre === 'prive') circFlags |= 1;
   if (circ.quille) circFlags |= 2;
   if (circ.abeille) circFlags |= 4;
+  if (circ.cochonCirculaire) circFlags |= 8;
 
   const circArr: V3Circulaire = [
     circ.segments.map(encodeSegmentV3),
@@ -101,6 +107,11 @@ function encodeFalucheV3(f: Faluche): CompactFalucheV3 {
     circFlags,
   ];
   if (circ.typeBac === 'autre' && circ.typeBacAutre) circArr.push(circ.typeBacAutre);
+  if (circ.capacitaires && circ.capacitaires.length > 0) {
+    // Ensure typeBacAutre slot exists (pad with empty string if needed)
+    if (circArr.length === 7) circArr.push('');
+    circArr.push(circ.capacitaires.join(',') as string);
+  }
 
   const result: CompactFalucheV3 = {
     v: 3,
@@ -121,6 +132,7 @@ function decodeAnnotationV3(arr: V3Annotation): [number, AnneeAnnotation] {
   for (let i = 0; i < ANN_BITS.length; i++) {
     if (bitmask & (1 << i)) (ann as Record<string, unknown>)[ANN_BITS[i]] = true;
   }
+  if (bitmask & (1 << 8)) ann.moivreChange = (bitmask & (1 << 9)) ? 'prive' : 'public';
   if (arr.length > 2) ann.etranger = PAYS[arr[2] as number]?.drapeau ?? '';
   return [yearIdx, ann];
 }
@@ -142,6 +154,8 @@ function decodeSegmentV3(arr: V3Segment): CursusSegment {
   if (flags & 1) seg.diplome = true;
   if (flags & 2) seg.palmeCycle = true;
   if (flags & 4) seg.abandon = true;
+  if (flags & 8) seg.agregation = true;
+  if (flags & 16) seg.capes = true;
 
   // Remaining elements are annotations
   if (arr.length > 4) {
@@ -193,6 +207,8 @@ function decodeFalucheV3(cf: CompactFalucheV3): Faluche {
       moivre: (circFlags & 1) ? 'prive' : 'public',
       ...((circFlags & 2) ? { quille: true } : {}),
       ...((circFlags & 4) ? { abeille: true } : {}),
+      ...((circFlags & 8) ? { cochonCirculaire: true } : {}),
+      ...((cf.c.length > 8 && cf.c[8]) ? { capacitaires: (cf.c[8] as string).split(',') } : {}),
     },
     velours: {
       rubans: [],

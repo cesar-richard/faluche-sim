@@ -79,6 +79,22 @@ export function Velours({ cx, cy, radius, insignes, selectedId, onSelect, onMove
         onClick={handleBgClick}
       />
 
+      {/* Zone indicators (subtle) */}
+      <g opacity={0.15} clipPath={`url(#${clipId})`}>
+        {/* Vertical divider (left/right separation) */}
+        <line x1={cx} y1={cy - radius} x2={cx} y2={cy + radius} stroke="#888" strokeWidth={0.5} strokeDasharray="4 4" />
+        {/* Horizontal divider */}
+        <line x1={cx - radius} y1={cy} x2={cx + radius} y2={cy} stroke="#888" strokeWidth={0.5} strokeDasharray="4 4" />
+      </g>
+      <g opacity={0.12}>
+        <text x={cx + radius * 0.5} y={cy - radius * 0.55} textAnchor="middle" fill="#888" fontSize={7} fontFamily="sans-serif">1. Officielle</text>
+        <text x={cx + radius * 0.55} y={cy + radius * 0.05} textAnchor="middle" fill="#888" fontSize={7} fontFamily="sans-serif">2. Personnelle</text>
+        <text x={cx + radius * 0.4} y={cy + radius * 0.65} textAnchor="middle" fill="#888" fontSize={7} fontFamily="sans-serif">3. Voyages</text>
+        <text x={cx - radius * 0.4} y={cy + radius * 0.65} textAnchor="middle" fill="#888" fontSize={7} fontFamily="sans-serif">4. Événements</text>
+        <text x={cx - radius * 0.55} y={cy + radius * 0.05} textAnchor="middle" fill="#888" fontSize={7} fontFamily="sans-serif">5. Échanges</text>
+        <text x={cx} y={cy - radius * 0.1} textAnchor="middle" fill="#888" fontSize={7} fontFamily="sans-serif">6. Associations</text>
+      </g>
+
       {/* Insignes — clipped to circle */}
       <g clipPath={`url(#${clipId})`}>
       {insignes.map((insigne) => {

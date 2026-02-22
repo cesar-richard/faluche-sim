@@ -46,7 +46,7 @@ export const INSIGNES_CATALOG: InsigneDef[] = [
   { id: 'epi_faucille', label: 'Épi de blé croisé faucille', category: 'auto', labelEndroit: 'Chanceux aux examens' },
   { id: 'etoile_foudre_perso', label: 'Étoile et foudre', category: 'auto', labelEndroit: 'Amour des nouvelles technologies' },
   { id: 'fer_cheval', label: 'Fer à cheval', category: 'auto', labelEndroit: 'Chanceux' },
-  { id: 'feuille_vigne', label: 'Feuille de vigne', category: 'auto', labelEndroit: 'Perte de virginité (masculine)' },
+  { id: 'feuille_vigne', label: 'Feuille de vigne', category: 'auto', labelEndroit: 'Perte de virginité masculine (pendant la vie falucharde)' },
   { id: 'fleur_lys', label: 'Fleur de Lys', category: 'auto', labelEndroit: 'Scout' },
   { id: 'fourchette', label: 'Fourchette', category: 'auto', labelEndroit: 'Amour des plaisirs de la table' },
   { id: 'fourchettes_croisees', label: 'Fourchettes croisées', category: 'auto', labelEndroit: 'Mange comme un porc' },
@@ -62,7 +62,7 @@ export const INSIGNES_CATALOG: InsigneDef[] = [
   { id: 'pendu', label: 'Pendu', category: 'auto', labelEndroit: 'Marié(e) ou pacsé(e)' },
   { id: 'plume', label: 'Plume', category: 'auto', labelEndroit: 'Amour des arts littéraires' },
   { id: 'raquette_ballon', label: 'Raquette / Ballon', category: 'auto', labelEndroit: 'Amour du sport' },
-  { id: 'rose', label: 'Rose', category: 'auto', labelEndroit: 'Perte de virginité (féminine)' },
+  { id: 'rose', label: 'Rose', category: 'auto', labelEndroit: 'Perte de virginité féminine (pendant la vie falucharde)' },
   { id: 'skis', label: 'Skis', category: 'auto', labelEndroit: 'Amour de la montagne' },
   { id: 'sphinx', label: 'Sphinx', category: 'auto', labelEndroit: 'Polyglotte' },
   { id: 'tete_taureau', label: 'Tête de taureau', category: 'auto', labelEndroit: 'Géniteur (ruban rose=fille, bleu=garçon)' },
@@ -112,4 +112,12 @@ export const INSIGNES_CATALOG: InsigneDef[] = [
   { id: 'sabot', label: 'Sabot', category: 'regional', labelEndroit: 'Breton monté à Paris' },
   { id: 'sanglier', label: 'Sanglier', category: 'regional', labelEndroit: 'Ardennais' },
   { id: 'taste_vin', label: 'Taste-vin', category: 'regional', labelEndroit: 'Bourguignon' },
+
+  // --- Ajouts spec Amiens (indices stables, ne pas réordonner) ---
+  { id: 'cochon_ruban_bleu', label: 'Cochon + ruban bleu', category: 'obligatoire_amiens', labelEndroit: 'Mange comme un porc (remplace fourchettes croisées)' },
+  { id: 'faux', label: 'Faux', category: 'obligatoire_amiens', labelEndroit: 'Passage de vie à trépas (garde santé, Art. 9)' },
+  { id: 'squelette_diamant', label: 'Squelette ↓ + diamant (même sexe)', category: 'obligatoire_amiens', svgId: 'squelette_diamant', defaultRetourne: true, labelEndroit: 'Anatomie du même sexe' },
+  { id: 'squelette_rubis', label: 'Squelette ↓ + rubis (deux sexes)', category: 'obligatoire_amiens', svgId: 'squelette_rubis', defaultRetourne: true, labelEndroit: 'Anatomie des deux sexes' },
+  { id: 'abeille_regionale', label: 'Abeille (régionale)', category: 'regional', svgId: 'abeille_regionale', labelEndroit: 'Ville impériale' },
+  { id: 'fleur_lys_regionale', label: 'Fleur de Lys (régionale)', category: 'regional', svgId: 'fleur_lys', labelEndroit: 'Ville royale' },
 ];
